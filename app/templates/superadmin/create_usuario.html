@@ -1,0 +1,19 @@
+<form method="post">
+    <label>User ID</label><input type="text" name="user_id"><br>
+    <label>User Email</label><input type="email" name="user_email"><br>
+    <label>User Name</label><input type="text" name="user_name"><br>
+    <label>Empresa</label>
+    <select name="empresa_id">
+        {% for emp in empresas %}
+            <option value="{{ emp.id }}">{{ emp.nome }}</option>
+        {% endfor %}
+    </select><br>
+    <label>Role</label>
+    <select name="role">
+        <option value="usuario">Usuário</option>
+        <option value="gestor">Gestor</option>
+        <option value="superadmin">Super-Admin</option>
+    </select>
+    <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <button type="submit">Criar</button>
+</form>

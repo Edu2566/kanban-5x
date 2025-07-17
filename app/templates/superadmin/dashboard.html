@@ -1,0 +1,8 @@
+<h2>Painel Super-Admin</h2>
+<a href="{{ url_for('superadmin.create_empresa', token=session['superadmin_token']) }}">Nova Empresa</a> |
+<a href="{{ url_for('superadmin.create_usuario', token=session['superadmin_token']) }}">Novo Usuário/Gestor</a>
+<ul>
+    {% for emp in empresas %}
+        <li>{{ emp.nome }} (Account ID: {{ emp.account_id }})</li>
+    {% endfor %}
+</ul>

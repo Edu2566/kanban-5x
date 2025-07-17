@@ -1,0 +1,15 @@
+::-webkit-scrollbar {
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #e1e1e1;
+    border-radius: 4px;
+  }
+  .kanban-board {
+    padding-bottom: 12px;
+  }  
+
+  .kanban-card:active {
+    box-shadow: 0 6px 18px #0003;
+    background: #e5eefe;
+}

@@ -1,0 +1,6 @@
+<form method="post">
+    <label>Nome Empresa</label><input type="text" name="nome"><br>
+    <label>Account ID</label><input type="text" name="account_id"><br>
+    <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <button type="submit">Criar</button>
+</form>
