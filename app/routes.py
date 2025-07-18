@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, g, abort
+from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
 from .models import db, Column, Card
 from flask import jsonify
 from .auth import login_required, gestor_required
@@ -8,7 +8,8 @@ main = Blueprint('main', __name__)
 @main.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    columns = Column.query.filter_by(empresa_id=g.user.empresa_id).all()
+    empresa_id = session.get('empresa_id', g.user.empresa_id)
+    columns = Column.query.filter_by(empresa_id=empresa_id).all()
     return render_template('index.html', columns=columns)
 
 # Column CRUD
