@@ -12,6 +12,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "dev"
+    os.makedirs(app.instance_path, exist_ok=True)
     db_path = os.path.join(app.instance_path, "kanban.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -33,6 +34,7 @@ def create_app():
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(superadmin_bp)
+
 
 
     return app
