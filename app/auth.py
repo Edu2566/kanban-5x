@@ -1,10 +1,16 @@
 from functools import wraps
-from flask import Blueprint, session, g, redirect, url_for
+from flask import Blueprint, session, g, redirect, url_for, render_template
 
 from .models import Usuario
 
 
 auth_bp = Blueprint('auth', __name__)
+
+
+@auth_bp.route('/login')
+def login_page():
+    """Simple page shown when login is required."""
+    return render_template('login.html')
 
 
 def login_user(usuario: Usuario) -> None:
@@ -43,7 +49,7 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if g.get('user') is None:
-            return redirect(url_for('main.index'))
+            return redirect(url_for('auth.login_page'))
         return view(**kwargs)
 
     return wrapped_view
@@ -55,7 +61,7 @@ def gestor_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if g.get('user') is None:
-            return redirect(url_for('main.index'))
+            return redirect(url_for('auth.login_page'))
         if g.user.role != 'gestor':
             return 'Acesso restrito aos gestores', 403
         return view(**kwargs)
