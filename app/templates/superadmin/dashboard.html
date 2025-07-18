@@ -1,8 +1,28 @@
 <h2>Painel Super-Admin</h2>
 <a href="{{ url_for('superadmin.create_empresa', token=session['superadmin_token']) }}">Nova Empresa</a> |
 <a href="{{ url_for('superadmin.create_usuario', token=session['superadmin_token']) }}">Novo Usuário/Gestor</a>
+<h3>Empresas</h3>
 <ul>
     {% for emp in empresas %}
-        <li>{{ emp.nome }} (Account ID: {{ emp.account_id }})</li>
+        <li>
+            {{ emp.nome }} (Account ID: {{ emp.account_id }})
+            <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}">Editar</a>
+            <form method="post" action="{{ url_for('superadmin.delete_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}" style="display:inline;">
+                <button type="submit">Deletar</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<h3>Usuários</h3>
+<ul>
+    {% for usr in usuarios %}
+        <li>
+            {{ usr.user_name }} - {{ usr.user_email }}
+            <a href="{{ url_for('superadmin.edit_usuario', usuario_id=usr.id, token=session['superadmin_token']) }}">Editar</a>
+            <form method="post" action="{{ url_for('superadmin.delete_usuario', usuario_id=usr.id, token=session['superadmin_token']) }}" style="display:inline;">
+                <button type="submit">Deletar</button>
+            </form>
+        </li>
     {% endfor %}
 </ul>

@@ -22,14 +22,19 @@ def create_app():
     # Import models so that create_all can see them
     from .models import Empresa, Usuario, Column, Card  # noqa: F401
 
+    # Import models so that create_all can see them
+    from .models import Empresa, Usuario, Column, Card  # noqa: F401
+
     from .routes import main
     from .webhook import webhook_bp
     from .auth import auth_bp
     from .superadmin import superadmin_bp
-
     app.register_blueprint(main)
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(superadmin_bp)
+
+    with app.app_context():
+        db.create_all()
 
     return app
