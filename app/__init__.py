@@ -16,7 +16,9 @@ def create_app():
     from .models import Empresa, Usuario, Column, Card  # noqa: F401
 
     from .routes import main
+    from .webhook import webhook_bp
     app.register_blueprint(main)
+    app.register_blueprint(webhook_bp)
 
     with app.app_context():
         db.create_all()
