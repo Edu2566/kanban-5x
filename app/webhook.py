@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from .models import db, Empresa, Usuario
+from .auth import login_user
 import json
 
 webhook_bp = Blueprint('webhook', __name__)
@@ -42,7 +43,6 @@ def chatwoot_webhook():
         db.session.add(usuario)
         db.session.commit()
 
-    session['empresa_id'] = empresa.id
-    session['usuario_id'] = usuario.id
+    login_user(usuario)
 
     return jsonify({'success': True})
