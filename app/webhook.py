@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for
 from .models import db, Empresa, Usuario
 from .auth import login_user
 import json
@@ -45,5 +45,8 @@ def chatwoot_webhook():
         db.session.commit()
 
     login_user(usuario)
+
+    if request.method == "GET":
+        return redirect(url_for("main.index"))
 
     return jsonify({"success": True})
