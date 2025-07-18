@@ -6,7 +6,7 @@ import json
 webhook_bp = Blueprint('webhook', __name__)
 
 
-@webhook_bp.route('/webhook/chatwoot', methods=['POST'])
+@webhook_bp.route('/webhook/chatwoot', methods=['GET'])
 def chatwoot_webhook():
     """Handle Chatwoot webhook requests."""
     query_header = request.headers.get('query', '{}')
