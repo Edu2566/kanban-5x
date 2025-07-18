@@ -11,7 +11,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-    
+
+    # Import models so that create_all can see them
+    from .models import Empresa, Usuario, Column, Card  # noqa: F401
 
     from .routes import main
     app.register_blueprint(main)
