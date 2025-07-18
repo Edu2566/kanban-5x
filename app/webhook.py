@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, redirect, url_for
+from flask import Blueprint, request, jsonify
 from .models import db, Empresa, Usuario
 from .auth import login_user
 import json
@@ -16,6 +16,8 @@ def chatwoot_webhook():
         except json.JSONDecodeError:
             return jsonify({"success": False, "error": "Invalid query header"}), 400
     else:  # GET request
+        # Chatwoot currently triggers the webhook using GET and passes
+        # the payload in the query string, so treat it the same as POST.
         data = request.args
 
     account_id = data.get("account_id")
@@ -46,7 +48,6 @@ def chatwoot_webhook():
 
     login_user(usuario)
 
-    if request.method == "GET":
-        return redirect(url_for("main.index"))
-
+    # Return a JSON response for both GET and POST requests so that
+    # Chatwoot receives a 200 status without redirection.
     return jsonify({"success": True})
