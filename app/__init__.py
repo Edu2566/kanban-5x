@@ -12,6 +12,8 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "dev"
+    app.config["SESSION_COOKIE_SAMESITE"] = "None"
+    app.config["SESSION_COOKIE_SECURE"] = True
     os.makedirs(app.instance_path, exist_ok=True)
     db_path = os.path.join(app.instance_path, "kanban.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"

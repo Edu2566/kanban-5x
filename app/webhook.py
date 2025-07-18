@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for
 from .models import db, Empresa, Usuario
 from .auth import login_user
 import json
@@ -48,6 +48,4 @@ def chatwoot_webhook():
 
     login_user(usuario)
 
-    # Return a JSON response for both GET and POST requests so that
-    # Chatwoot receives a 200 status without redirection.
-    return jsonify({"success": True})
+    return redirect(url_for('main.index'))
