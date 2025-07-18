@@ -18,9 +18,11 @@ def create_app():
     from .routes import main
     from .webhook import webhook_bp
     from .auth import auth_bp
+    from .superadmin import superadmin_bp
     app.register_blueprint(main)
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(superadmin_bp)
 
     with app.app_context():
         db.create_all()
