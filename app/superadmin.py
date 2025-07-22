@@ -1,6 +1,7 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, session, abort
-from .models import db, Empresa, Usuario
+from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g
+import json
+from .models import db, Empresa, Usuario, Column
 
 superadmin_bp = Blueprint('superadmin', __name__, url_prefix='/superadmin')
 
@@ -15,6 +16,9 @@ def _require_token():
 
 @superadmin_bp.before_request
 def check_superadmin_token():
+    # Allow super-admin role to access without token
+    if g.get('user') and g.user.role == 'superadmin':
+        return
     _require_token()
 
 
@@ -22,7 +26,11 @@ def check_superadmin_token():
 def dashboard():
     empresas = Empresa.query.all()
     usuarios = Usuario.query.all()
-    return render_template('superadmin/dashboard.html', empresas=empresas, usuarios=usuarios)
+    columns = Column.query.all()
+    return render_template(
+        'superadmin/dashboard.html', empresas=empresas,
+        usuarios=usuarios, columns=columns
+    )
 
 
 @superadmin_bp.route('/create_empresa', methods=['GET', 'POST'])
@@ -30,7 +38,14 @@ def create_empresa():
     if request.method == 'POST':
         nome = request.form['nome']
         account_id = request.form['account_id']
-        empresa = Empresa(nome=nome, account_id=account_id)
+        # Campos customizáveis em JSON (até 8 definições)
+        raw = request.form.get('custom_fields', '[]')
+        try:
+            cf = json.loads(raw)
+        except json.JSONDecodeError:
+            cf = []
+        empresa = Empresa(nome=nome, account_id=account_id,
+                          custom_fields=cf[:8])
         db.session.add(empresa)
         db.session.commit()
         return redirect(url_for('superadmin.dashboard'))
@@ -43,6 +58,13 @@ def edit_empresa(empresa_id):
     if request.method == 'POST':
         empresa.nome = request.form['nome']
         empresa.account_id = request.form['account_id']
+        # Atualiza campos customizáveis JSON
+        raw = request.form.get('custom_fields', '[]')
+        try:
+            cf = json.loads(raw)
+        except json.JSONDecodeError:
+            cf = []
+        empresa.custom_fields = cf[:8]
         db.session.commit()
         return redirect(url_for('superadmin.dashboard'))
     return render_template('superadmin/edit_empresa.html', empresa=empresa)
@@ -94,3 +116,36 @@ def delete_usuario(usuario_id):
     db.session.delete(usuario)
     db.session.commit()
     return redirect(url_for('superadmin.dashboard'))
+
+
+@superadmin_bp.route('/create_column', methods=['GET', 'POST'])
+def create_column():
+    empresas = Empresa.query.all()
+    if request.method == 'POST':
+        name = request.form['name']
+        empresa_id = int(request.form['empresa_id'])
+        column = Column(name=name, empresa_id=empresa_id)
+        db.session.add(column)
+        db.session.commit()
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
+    return render_template('superadmin/create_column.html', empresas=empresas)
+
+
+@superadmin_bp.route('/edit_column/<int:column_id>', methods=['GET', 'POST'])
+def edit_column(column_id):
+    column = Column.query.get_or_404(column_id)
+    empresas = Empresa.query.all()
+    if request.method == 'POST':
+        column.name = request.form['name']
+        column.empresa_id = int(request.form['empresa_id'])
+        db.session.commit()
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
+    return render_template('superadmin/edit_column.html', column=column, empresas=empresas)
+
+
+@superadmin_bp.route('/delete_column/<int:column_id>', methods=['POST'])
+def delete_column(column_id):
+    column = Column.query.get_or_404(column_id)
+    db.session.delete(column)
+    db.session.commit()
+    return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))

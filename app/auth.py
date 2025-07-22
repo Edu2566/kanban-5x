@@ -54,6 +54,17 @@ def login_required(view):
 
     return wrapped_view
 
+def superadmin_required(view):
+    """Allow access only for super-admins."""
+    @wraps(view)
+    def wrapped_view(**kwargs):
+        if g.get('user') is None:
+            return redirect(url_for('auth.login_page'))
+        if g.user.role != 'superadmin':
+            return 'Acesso restrito ao Super-Admin', 403
+        return view(**kwargs)
+    return wrapped_view
+
 
 def gestor_required(view):
     """Allow access only for gestores."""

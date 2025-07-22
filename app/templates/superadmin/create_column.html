@@ -1,0 +1,17 @@
+{% extends 'superadmin/layout.html' %}
+{% block title %}Criar Coluna{% endblock %}
+{% block content %}
+<h2>Criar Coluna</h2>
+<form method="post">
+    <label>Nome da Coluna</label>
+    <input type="text" name="name" required><br>
+    <label>Empresa</label>
+    <select name="empresa_id">
+        {% for emp in empresas %}
+            <option value="{{ emp.id }}">{{ emp.nome }}</option>
+        {% endfor %}
+    </select><br>
+    <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <button type="submit" class="btn btn-primary">Criar</button>
+</form>
+{% endblock %}

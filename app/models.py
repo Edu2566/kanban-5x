@@ -10,6 +10,8 @@ class Empresa(db.Model):
 
     columns = db.relationship('Column', backref='empresa', cascade='all, delete', lazy=True)
     usuarios = db.relationship('Usuario', backref='empresa', cascade='all, delete', lazy=True)
+    # campos customizáveis para cards: lista de definições {name, type}, até 8 itens
+    custom_fields = db.Column(db.JSON, nullable=False, default=list)
 
 
 class Usuario(db.Model):
@@ -43,4 +45,6 @@ class Card(db.Model):
     description = db.Column(db.String(300))
     column_id = db.Column(db.Integer, db.ForeignKey('columns.id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    # dados customizáveis do card conforme definições em Empresa.custom_fields
+    custom_data = db.Column(db.JSON, nullable=False, default=dict)
 

@@ -1,0 +1,45 @@
+body {
+    background-color: #f4f6f9;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+h2, h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+ul li {
+    background: #fff;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+form {
+    margin-bottom: 1.5rem;
+}
+label {
+    font-weight: 500;
+    margin-right: 0.5rem;
+}
+input[type="text"], input[type="email"], select {
+    border: 1px solid #ccc;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+}
+button, a.btn {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff !important;
+    padding: 0.4rem 0.8rem;
+    text-decoration: none;
+}
+button:hover, a.btn:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}

@@ -10,20 +10,20 @@ webhook_bp = Blueprint("webhook", __name__)
 def chatwoot_webhook():
     """Handle Chatwoot webhook requests."""
     if request.method == "POST":
-        query_header = request.headers.get("query", "{}")
+        # Espera payload JSON no body do webhook
         try:
-            data = json.loads(query_header)
-        except json.JSONDecodeError:
-            return jsonify({"success": False, "error": "Invalid query header"}), 400
-    else:  # GET request
-        # Chatwoot currently triggers the webhook using GET and passes
-        # the payload in the query string, so treat it the same as POST.
-        data = request.args
+            data = request.get_json(force=True) or {}
+        except Exception:
+            return jsonify({"success": False, "error": "Invalid JSON body"}), 400
+    else:
+        # Suporte para teste via GET com parâmetros na query string
+        data = request.args.to_dict()
 
+    # Extrai informações do webhook (ajuste conforme payload do Chatwoot)
     account_id = data.get("account_id")
-    user_email = data.get("user_email")
-    user_id = data.get("user_id")
-    user_name = data.get("user_name")
+    user_email = data.get("user_email") or data.get("email")
+    user_id = data.get("user_id") or str(data.get("id", ""))
+    user_name = data.get("user_name") or data.get("name")
 
     if not all([account_id, user_email, user_id, user_name]):
         return jsonify({"success": False, "error": "Missing data"}), 400

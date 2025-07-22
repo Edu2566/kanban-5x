@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
 from .models import db, Column, Card
 from flask import jsonify
-from .auth import login_required, gestor_required
+from .auth import login_required, gestor_required, superadmin_required
 
 main = Blueprint('main', __name__)
 
@@ -10,12 +10,14 @@ main = Blueprint('main', __name__)
 def index():
     empresa_id = session.get('empresa_id', g.user.empresa_id)
     columns = Column.query.filter_by(empresa_id=empresa_id).all()
-    return render_template('index.html', columns=columns)
+    # Definições de campos customizados (JSON) por empresa
+    custom_fields = g.user.empresa.custom_fields
+    return render_template('index.html', columns=columns, custom_fields=custom_fields)
 
 # Column CRUD
 @main.route('/add_column', methods=['POST'])
 @login_required
-@gestor_required
+@superadmin_required
 def add_column():
     name = request.form['name']
     column = Column(name=name, empresa_id=g.user.empresa_id)
@@ -25,7 +27,7 @@ def add_column():
 
 @main.route('/edit_column/<int:column_id>', methods=['POST'])
 @login_required
-@gestor_required
+@superadmin_required
 def edit_column(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
@@ -36,7 +38,7 @@ def edit_column(column_id):
 
 @main.route('/delete_column/<int:column_id>', methods=['POST'])
 @login_required
-@gestor_required
+@superadmin_required
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
@@ -51,13 +53,30 @@ def add_card(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    # Campos fixos
     title = request.form['title']
     description = request.form.get('description', '')
+    # Monta dados customizados conforme definições em Empresa.custom_fields
+    custom_data = {}
+    for field in g.user.empresa.custom_fields:
+        key = field.get('name')
+        raw = request.form.get(f'custom_{key}')
+        if field.get('type') == 'number':
+            try:
+                val = float(raw)
+            except (TypeError, ValueError):
+                val = None
+        elif field.get('type') == 'boolean':
+            val = bool(request.form.get(f'custom_{key}'))
+        else:
+            val = raw
+        custom_data[key] = val
     card = Card(
         title=title,
         description=description,
         column_id=column_id,
         usuario_id=g.user.id,
+        custom_data=custom_data,
     )
     db.session.add(card)
     db.session.commit()
@@ -73,6 +92,22 @@ def edit_card(card_id):
         return 'Acesso negado', 403
     card.title = request.form['title']
     card.description = request.form.get('description', '')
+    # Atualiza custom_data com os campos definidos
+    custom_data = {}
+    for field in g.user.empresa.custom_fields:
+        key = field.get('name')
+        raw = request.form.get(f'custom_{key}')
+        if field.get('type') == 'number':
+            try:
+                val = float(raw)
+            except (TypeError, ValueError):
+                val = None
+        elif field.get('type') == 'boolean':
+            val = bool(request.form.get(f'custom_{key}'))
+        else:
+            val = raw
+        custom_data[key] = val
+    card.custom_data = custom_data
     db.session.commit()
     return redirect(url_for('main.index'))
 
