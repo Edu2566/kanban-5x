@@ -6,7 +6,7 @@
     <label>Nome da Coluna</label>
     <input type="text" name="name" required><br>
     <label>Empresa</label>
-    {% set selected_emp = request.args.get('empresa_id', type=int) %}
+    {% set selected_emp = request.args.get('empresa_id') %}
     <select name="empresa_id">
         {% for emp in empresas %}
             <option value="{{ emp.id }}" {% if selected_emp == emp.id %}selected{% endif %}>{{ emp.nome }}</option>

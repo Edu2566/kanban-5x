@@ -5,9 +5,6 @@
 <form method="post">
     <label>Nome Empresa</label><input type="text" name="nome"><br>
     <label>Account ID</label><input type="text" name="account_id"><br>
-    <label>Custom Fields (JSON)</label><br>
-    <textarea name="custom_fields" rows="4" class="form-control">{{ empresa.custom_fields|default([])|tojson }}</textarea>
-    <small class="text-muted">Informe uma lista JSON de até 8 objetos { "name": "...", "type": "text|number|boolean" }.</small><br>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
     <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Criar</button>
