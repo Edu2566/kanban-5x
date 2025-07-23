@@ -54,6 +54,7 @@ def create_empresa():
     if request.method == 'POST':
         nome = request.form['nome']
         account_id = request.form['account_id']
+        dark_mode = bool(request.form.get('dark_mode'))
         # Campos customizáveis em JSON (até 8 definições)
         raw = request.form.get('custom_fields', '[]')
         try:
@@ -61,7 +62,7 @@ def create_empresa():
         except json.JSONDecodeError:
             cf = []
         empresa = Empresa(nome=nome, account_id=account_id,
-                          custom_fields=cf[:8])
+                          custom_fields=cf[:8], dark_mode=dark_mode)
         db.session.add(empresa)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
@@ -74,6 +75,7 @@ def edit_empresa(empresa_id):
     if request.method == 'POST':
         empresa.nome = request.form['nome']
         empresa.account_id = request.form['account_id']
+        empresa.dark_mode = bool(request.form.get('dark_mode'))
         # Atualiza campos customizáveis JSON
         raw = request.form.get('custom_fields', '[]')
         try:
