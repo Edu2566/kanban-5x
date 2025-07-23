@@ -74,14 +74,14 @@ def add_card(column_id):
         abort(404)
     # Campos fixos
     title = request.form['title']
-    description = request.form.get('description', '')
+    valor_negociado = request.form.get('valor_negociado', type=float)
     # Monta dados customizados conforme definições em Empresa.custom_fields
     custom_data = build_custom_data(request.form)
     card = Card(
         title=title,
-        description=description,
+        valor_negociado=valor_negociado,
         column_id=column_id,
-        usuario_id=g.user.id,
+        vendedor_id=g.user.id,
         custom_data=custom_data,
     )
     db.session.add(card)
@@ -94,10 +94,10 @@ def edit_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
-    if g.user.role != 'gestor' and card.usuario_id != g.user.id:
+    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return 'Acesso negado', 403
     card.title = request.form['title']
-    card.description = request.form.get('description', '')
+    card.valor_negociado = request.form.get('valor_negociado', type=float)
     # Atualiza custom_data com os campos definidos
     custom_data = build_custom_data(request.form)
     card.custom_data = custom_data
@@ -110,7 +110,7 @@ def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
-    if g.user.role != 'gestor' and card.usuario_id != g.user.id:
+    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return 'Acesso negado', 403
     db.session.delete(card)
     db.session.commit()
@@ -122,7 +122,7 @@ def move_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
-    if g.user.role != 'gestor' and card.usuario_id != g.user.id:
+    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return 'Acesso negado', 403
     new_column_id = int(request.form['new_column_id'])
     column = Column.query.get_or_404(new_column_id)
@@ -141,7 +141,7 @@ def api_move_card():
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
-    if g.user.role != 'gestor' and card.usuario_id != g.user.id:
+    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return jsonify({'success': False}), 403
     column = Column.query.get_or_404(new_column_id)
     if column.empresa_id != g.user.empresa_id:
