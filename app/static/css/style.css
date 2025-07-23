@@ -37,3 +37,21 @@ body.dark-mode {
 .dark-mode .kanban-card .card-desc {
     color: #fff;
 }
+
+/* Dark mode modal styling */
+.dark-mode .modal-content {
+    background: #2a2a2a;
+    color: #fff;
+}
+.dark-mode .modal-header,
+.dark-mode .modal-footer {
+    background: #181818;
+    color: #fff;
+    border-color: #444;
+}
+.dark-mode .modal-content .form-control,
+.dark-mode .modal-content .form-select {
+    background-color: #3a3a3a;
+    color: #fff;
+    border-color: #555;
+}
