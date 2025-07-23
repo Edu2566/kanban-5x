@@ -12,6 +12,7 @@ class Empresa(db.Model):
     usuarios = db.relationship('Usuario', backref='empresa', cascade='all, delete', lazy=True)
     # campos customizáveis para cards: lista de definições {name, type}, até 8 itens
     custom_fields = db.Column(db.JSON, nullable=False, default=list)
+    dark_mode = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class Usuario(db.Model):
