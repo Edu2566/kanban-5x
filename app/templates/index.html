@@ -107,7 +107,7 @@
               <div class="mb-3">
                   <label for="modalCardVendedor" class="form-label">Vendedor</label>
                   <select id="modalCardVendedor" name="vendedor_id" class="form-select">
-                      {% for usuario in g.user.empresa.usuarios %}
+                      {% for usuario in usuarios %}
                       <option value="{{ usuario.id }}" {% if usuario.id == g.user.id %}selected{% endif %}>{{ usuario.user_name }}</option>
                       {% endfor %}
                   </select>
@@ -189,7 +189,7 @@
             <div class="mb-3">
               <label for="modalAddCardVendedor" class="form-label">Vendedor</label>
               <select id="modalAddCardVendedor" name="vendedor_id" class="form-select">
-                {% for usuario in g.user.empresa.usuarios %}
+                {% for usuario in usuarios %}
                 <option value="{{ usuario.id }}" {% if usuario.id == g.user.id %}selected{% endif %}>{{ usuario.user_name }}</option>
                 {% endfor %}
               </select>
