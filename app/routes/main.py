@@ -41,12 +41,12 @@ def index():
 
     # Definições de campos customizados (JSON) por empresa
     custom_fields = g.user.empresa.custom_fields
-    usuarios = g.user.empresa.usuarios
+    vendedores = g.user.empresa.usuarios
     return render_template(
         'index.html',
         columns=columns,
         custom_fields=custom_fields,
-        usuarios=usuarios,
+        vendedores=vendedores,
     )
 
 # Column CRUD

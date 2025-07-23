@@ -39,12 +39,12 @@ def dashboard():
 @superadmin_bp.route('/empresa/<int:empresa_id>')
 def empresa_detail(empresa_id):
     empresa = Empresa.query.get_or_404(empresa_id)
-    usuarios = Usuario.query.filter_by(empresa_id=empresa_id).all()
+    vendedores = Usuario.query.filter_by(empresa_id=empresa_id).all()
     columns = Column.query.filter_by(empresa_id=empresa_id).all()
     return render_template(
         'superadmin/empresa_detail.html',
         empresa=empresa,
-        usuarios=usuarios,
+        vendedores=vendedores,
         columns=columns,
     )
 
@@ -94,8 +94,8 @@ def delete_empresa(empresa_id):
     return redirect_next('superadmin.dashboard')
 
 
-@superadmin_bp.route('/create_usuario', methods=['GET', 'POST'])
-def create_usuario():
+@superadmin_bp.route('/create_vendedor', methods=['GET', 'POST'])
+def create_vendedor():
     empresas = Empresa.query.all()
     if request.method == 'POST':
         usuario = Usuario(
@@ -108,12 +108,12 @@ def create_usuario():
         db.session.add(usuario)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
-    return render_template('superadmin/create_usuario.html', empresas=empresas)
+    return render_template('superadmin/create_vendedor.html', empresas=empresas)
 
 
-@superadmin_bp.route('/edit_usuario/<int:usuario_id>', methods=['GET', 'POST'])
-def edit_usuario(usuario_id):
-    usuario = Usuario.query.get_or_404(usuario_id)
+@superadmin_bp.route('/edit_vendedor/<int:vendedor_id>', methods=['GET', 'POST'])
+def edit_vendedor(vendedor_id):
+    usuario = Usuario.query.get_or_404(vendedor_id)
     empresas = Empresa.query.all()
     if request.method == 'POST':
         usuario.user_id = request.form['user_id']
@@ -123,12 +123,12 @@ def edit_usuario(usuario_id):
         usuario.empresa_id = int(request.form['empresa_id'])
         db.session.commit()
         return redirect_next('superadmin.dashboard')
-    return render_template('superadmin/edit_usuario.html', usuario=usuario, empresas=empresas)
+    return render_template('superadmin/edit_vendedor.html', usuario=usuario, empresas=empresas)
 
 
-@superadmin_bp.route('/delete_usuario/<int:usuario_id>', methods=['POST'])
-def delete_usuario(usuario_id):
-    usuario = Usuario.query.get_or_404(usuario_id)
+@superadmin_bp.route('/delete_vendedor/<int:vendedor_id>', methods=['POST'])
+def delete_vendedor(vendedor_id):
+    usuario = Usuario.query.get_or_404(vendedor_id)
     db.session.delete(usuario)
     db.session.commit()
     return redirect_next('superadmin.dashboard')

@@ -15,7 +15,7 @@ def login_page():
 
 def login_user(usuario: Usuario) -> None:
     """Persist logged in user info in the session."""
-    session['usuario_id'] = usuario.id
+    session['vendedor_id'] = usuario.id
     session['empresa_id'] = usuario.empresa_id
     g.user = usuario
 
@@ -29,7 +29,7 @@ def logout_user() -> None:
 @auth_bp.before_app_request
 def load_logged_in_user():
     """Load user from the session and store in ``g.user``."""
-    user_id = session.get('usuario_id')
+    user_id = session.get('vendedor_id')
     if user_id is None:
         g.user = None
     else:
