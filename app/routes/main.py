@@ -1,11 +1,30 @@
 from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
 from ..models import db, Column, Card
 from flask import jsonify
-from .auth import login_required, gestor_required, superadmin_required
+from .auth import login_required, superadmin_required
 
 main = Blueprint('main', __name__)
 
-@main.route('/', methods=['GET', 'POST'])
+
+def build_custom_data(form):
+    """Construct custom data dict from form based on empresa custom fields."""
+    custom_data = {}
+    for field in g.user.empresa.custom_fields:
+        key = field.get('name')
+        raw = form.get(f'custom_{key}')
+        if field.get('type') == 'number':
+            try:
+                val = float(raw)
+            except (TypeError, ValueError):
+                val = None
+        elif field.get('type') == 'boolean':
+            val = bool(form.get(f'custom_{key}'))
+        else:
+            val = raw
+        custom_data[key] = val
+    return custom_data
+
+@main.route('/', methods=['GET'])
 @login_required
 def index():
     empresa_id = session.get('empresa_id', g.user.empresa_id)
@@ -57,20 +76,7 @@ def add_card(column_id):
     title = request.form['title']
     description = request.form.get('description', '')
     # Monta dados customizados conforme definições em Empresa.custom_fields
-    custom_data = {}
-    for field in g.user.empresa.custom_fields:
-        key = field.get('name')
-        raw = request.form.get(f'custom_{key}')
-        if field.get('type') == 'number':
-            try:
-                val = float(raw)
-            except (TypeError, ValueError):
-                val = None
-        elif field.get('type') == 'boolean':
-            val = bool(request.form.get(f'custom_{key}'))
-        else:
-            val = raw
-        custom_data[key] = val
+    custom_data = build_custom_data(request.form)
     card = Card(
         title=title,
         description=description,
@@ -93,20 +99,7 @@ def edit_card(card_id):
     card.title = request.form['title']
     card.description = request.form.get('description', '')
     # Atualiza custom_data com os campos definidos
-    custom_data = {}
-    for field in g.user.empresa.custom_fields:
-        key = field.get('name')
-        raw = request.form.get(f'custom_{key}')
-        if field.get('type') == 'number':
-            try:
-                val = float(raw)
-            except (TypeError, ValueError):
-                val = None
-        elif field.get('type') == 'boolean':
-            val = bool(request.form.get(f'custom_{key}'))
-        else:
-            val = raw
-        custom_data[key] = val
+    custom_data = build_custom_data(request.form)
     card.custom_data = custom_data
     db.session.commit()
     return redirect(url_for('main.index'))
