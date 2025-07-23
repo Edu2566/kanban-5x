@@ -43,3 +43,17 @@ button:hover, a.btn:hover {
     background-color: #2980b9;
     border-color: #2980b9;
 }
+
+/* Dark mode overrides */
+body.dark-mode {
+    background-color: #323232;
+    color: #fff;
+}
+.dark-mode h2,
+.dark-mode h3 {
+    color: #fff;
+}
+.dark-mode ul li {
+    background: #181818;
+    color: #fff;
+}
