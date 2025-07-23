@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
-from .models import db, Column, Card
+from ..models import db, Column, Card
 from flask import jsonify
 from .auth import login_required, gestor_required, superadmin_required
 

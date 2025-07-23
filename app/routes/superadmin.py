@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g
 import json
-from .models import db, Empresa, Usuario, Column
+from ..models import db, Empresa, Usuario, Column
 
 superadmin_bp = Blueprint('superadmin', __name__, url_prefix='/superadmin')
 
