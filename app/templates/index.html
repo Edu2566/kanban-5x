@@ -48,7 +48,7 @@
     </div>
     {% endif %}
     <div class="kanban-board">
-        {% for column in columns if column.empresa_id == session['empresa_id'] %}
+        {% for column in columns %}
         <div class="kanban-column" data-column-id="{{ column.id }}">
             <div class="kanban-header d-flex align-items-center justify-content-between mb-2">
                 <span class="fw-bold fs-5">
@@ -61,7 +61,7 @@
                 </span>
             </div>
             <div class="kanban-cards" id="column-{{ column.id }}">
-                {% for card in column.cards if card.column.empresa_id == session['empresa_id'] %}
+                {% for card in column.cards %}
                 <div class="kanban-card" 
                      draggable="true"
                      data-card-id="{{ card.id }}"
