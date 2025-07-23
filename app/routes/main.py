@@ -179,3 +179,13 @@ def api_move_card():
     card.column_id = new_column_id
     db.session.commit()
     return jsonify({'success': True})
+
+
+@main.route('/toggle_theme', methods=['POST'])
+@login_required
+def toggle_theme():
+    """Flip the dark_mode setting for the logged user's company."""
+    empresa = g.user.empresa
+    empresa.dark_mode = not empresa.dark_mode
+    db.session.commit()
+    return jsonify({'success': True, 'dark_mode': empresa.dark_mode})
