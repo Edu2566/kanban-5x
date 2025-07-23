@@ -47,6 +47,25 @@ function openEditModal(cardDiv) {
 }
 
 // Drag and Drop com SortableJS
+function formatBRL(value) {
+    return (value || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function updateColumnStats(columnEl) {
+    const cards = columnEl.querySelectorAll('.kanban-card');
+    let total = 0;
+    cards.forEach(card => {
+        total += parseFloat(card.getAttribute('data-valor')) || 0;
+    });
+    const badge = columnEl.querySelector('.kanban-header .badge');
+    if (badge) {
+        badge.textContent = `${cards.length} • ${formatBRL(total)}`;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggleForm = document.getElementById('toggleThemeForm');
     if (toggleForm) {
@@ -84,16 +103,27 @@ document.addEventListener('DOMContentLoaded', () => {
             group: 'kanban',
             animation: 150,
             onAdd: function (evt) {
-                // Card foi movido
+                // Card foi movido entre colunas
                 const cardId = evt.item.getAttribute('data-card-id');
-                const newColumnId = evt.to.closest('.kanban-column').getAttribute('data-column-id');
+                const newColumn = evt.to.closest('.kanban-column');
+                const oldColumn = evt.from.closest('.kanban-column');
+                const newColumnId = newColumn.getAttribute('data-column-id');
+
                 fetch("/api/move_card", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({card_id: cardId, column_id: newColumnId})
                 }).then(response => {
-                    if (!response.ok) alert("Erro ao mover card!");
+                    if (!response.ok) {
+                        alert("Erro ao mover card!");
+                        location.reload();
+                    }
                 });
+
+                updateColumnStats(newColumn);
+                if (oldColumn && oldColumn !== newColumn) {
+                    updateColumnStats(oldColumn);
+                }
             }
         });
     });
