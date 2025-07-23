@@ -20,7 +20,7 @@
 }
 
 /* Dark mode overrides */
-.dark-mode body {
+body.dark-mode {
     background: #323232;
     color: #fff;
 }
