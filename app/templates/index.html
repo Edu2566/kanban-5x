@@ -27,15 +27,15 @@
     <div class="kanban-board row flex-wrap g-3">
         {% for column in columns %}
         <div class="kanban-column col-12 col-sm-6 col-md-4 col-lg-3" data-column-id="{{ column.id }}">
-            <div class="kanban-header d-flex align-items-center justify-content-between mb-2">
-                <span class="fw-bold fs-5">
-                    {{ column.name }}
-                    <span class="ms-1 badge bg-secondary">
-                        {{ column.cards_count }} • {{ column.valor_total|brl }}
-                    </span>
-                    {% if g.user.role == 'superadmin' %}
-                    {% endif %}
+            <div class="kanban-header d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-secondary me-2">
+                    {{ column.cards_count }} • {{ column.valor_total|brl }}
                 </span>
+                <span class="fw-bold fs-5 flex-grow-1 text-end">
+                    {{ column.name }}
+                </span>
+                {% if g.user.role == 'superadmin' %}
+                {% endif %}
             </div>
             <div class="kanban-cards" id="column-{{ column.id }}">
                 {% for card in column.filtered_cards %}
