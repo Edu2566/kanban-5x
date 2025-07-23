@@ -34,9 +34,6 @@
                         {{ column.cards_count }} • {{ column.valor_total|brl }}
                     </span>
                     {% if g.user.role == 'superadmin' %}
-                    <a href="#" class="ms-2" onclick="openEditColumnModal({{ column.id }}, '{{ column.name|tojson }}'); return false;" title="Editar coluna">
-                        <i class="fa-regular fa-pen-to-square" style="font-size:1.0em;"></i>
-                    </a>
                     {% endif %}
                 </span>
             </div>
