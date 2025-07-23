@@ -42,7 +42,6 @@
 {% set dark = g.user.empresa.dark_mode %}
 <body class="{{ 'dark-mode' if dark else '' }}">
 <div class="container py-4">
-    <h2 class="mb-4 text-center">Kanban Board</h2>
     <div class="mb-3 text-end">
         <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
             <button type="submit" class="btn btn-outline-secondary">Modo Escuro/Claro</button>
