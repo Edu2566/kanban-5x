@@ -29,10 +29,10 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    from .routes import main
-    from .webhook import webhook_bp
-    from .auth import auth_bp
-    from .superadmin import superadmin_bp
+    from .routes.main import main
+    from .routes.webhook import webhook_bp
+    from .routes.auth import auth_bp
+    from .routes.superadmin import superadmin_bp
     app.register_blueprint(main)
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)
