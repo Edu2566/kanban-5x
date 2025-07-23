@@ -3,44 +3,12 @@
 <head>
     <title>Kanban Board</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kanban.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-    <style>
-        body { background: #f3f6fa; }
-        .kanban-board { display: flex; gap: 1.5rem; overflow-x: auto; }
-        .kanban-column {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 6px 30px #0001;
-            min-width: 340px;
-            padding: 1.3rem;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .kanban-header { font-weight: 600; font-size: 1.2rem; margin-bottom: .8rem; }
-        .kanban-cards { flex: 1; min-height: 10px; }
-        .kanban-card {
-            background: linear-gradient(135deg, #f0f3fc 80%, #dde7fa 100%);
-            border-radius: 16px;
-            box-shadow: 0 2px 10px #0002;
-            margin-bottom: 1rem;
-            padding: 1rem 1.2rem;
-            transition: box-shadow .2s;
-            cursor: grab;
-            border: none;
-            position: relative;
-        }
-        .kanban-card:hover { box-shadow: 0 4px 18px #0003; }
-        .kanban-card .card-title { font-weight: 500; margin-bottom: .4rem; }
-        .kanban-card .card-desc { color: #4d5a6a; font-size: .98rem; }
-        .modal-header { background: #f0f3fc; border-bottom: none; }
-        .modal-footer { border-top: none; }
-        .add-form input, .add-form button { border-radius: 8px; }
-    </style>
 </head>
 {% set dark = g.user.empresa.dark_mode %}
-<body class="{{ 'dark-mode' if dark else '' }}">
+<body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
 <div class="container py-4">
     <div class="mb-3 text-end">
         <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
@@ -229,90 +197,6 @@
   
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-const currentUserId = {{ g.user.id }};
-function openEditColumnModal(columnId, columnName) {
-    document.getElementById('modalColumnId').value = columnId;
-    document.getElementById('modalColumnName').value = columnName;
-    document.getElementById('editColumnForm').action = "/edit_column/" + columnId;
-
-    document.getElementById('deleteColumnBtn').onclick = function() {
-        fetch("/delete_column/" + columnId, {method: "POST"})
-        .then(() => location.reload());
-    };
-
-    new bootstrap.Modal(document.getElementById('editColumnModal')).show();
-}
-
-function openAddCardModal(columnId) {
-    document.getElementById('modalAddCardColumnId').value = columnId;
-    document.getElementById('addCardForm').action = "/add_card/" + columnId;
-    document.getElementById('modalAddCardTitle').value = '';
-    document.getElementById('modalAddCardValor').value = '';
-    document.getElementById('modalAddCardVendedor').value = currentUserId;
-    new bootstrap.Modal(document.getElementById('addCardModal')).show();
-}
-
-function openEditModal(cardDiv) {
-    const cardId = cardDiv.getAttribute('data-card-id');
-    const title = cardDiv.getAttribute('data-title');
-    const valor = cardDiv.getAttribute('data-valor') || '';
-    const vendedor = cardDiv.getAttribute('data-vendedor-id') || '';
-
-    document.getElementById('modalCardId').value = cardId;
-    document.getElementById('modalCardTitle').value = title;
-    document.getElementById('modalCardValor').value = valor;
-    document.getElementById('modalCardVendedor').value = vendedor;
-    document.getElementById('editCardForm').action = "/edit_card/" + cardId;
-
-    // Handler delete button
-    document.getElementById('deleteCardBtn').onclick = function() {
-        fetch("/delete_card/" + cardId, {method: "POST"})
-        .then(() => location.reload());
-    }
-
-    new bootstrap.Modal(document.getElementById('editCardModal')).show();
-}
-
-// Drag and Drop com SortableJS
-document.addEventListener('DOMContentLoaded', () => {
-    const toggleForm = document.getElementById('toggleThemeForm');
-    if (toggleForm) {
-        toggleForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            fetch(toggleForm.action, {method: 'POST'})
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        document.body.classList.toggle('dark-mode', data.dark_mode);
-                    } else {
-                        location.reload();
-                    }
-                })
-                .catch(() => location.reload());
-        });
-    }
-
-    const columns = document.querySelectorAll('.kanban-cards');
-    columns.forEach(column => {
-        new Sortable(column, {
-            group: 'kanban',
-            animation: 150,
-            onAdd: function (evt) {
-                // Card foi movido
-                const cardId = evt.item.getAttribute('data-card-id');
-                const newColumnId = evt.to.closest('.kanban-column').getAttribute('data-column-id');
-                fetch("/api/move_card", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({card_id: cardId, column_id: newColumnId})
-                }).then(response => {
-                    if (!response.ok) alert("Erro ao mover card!");
-                });
-            }
-        });
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/kanban.js') }}"></script>
 </body>
 </html>
