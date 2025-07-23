@@ -5,6 +5,7 @@
 <form method="post">
     <label>Nome Empresa</label><input type="text" name="nome"><br>
     <label>Account ID</label><input type="text" name="account_id"><br>
+    <label>Modo escuro</label><input type="checkbox" name="dark_mode"><br>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
     <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Criar</button>
