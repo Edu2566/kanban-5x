@@ -5,6 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 
+def format_brl(value):
+    if value is None:
+        return 'R$\xa00,00'
+    return f"R$\xa0{value:,.2f}".replace(',', 'v').replace('.', ',').replace('v','.')
+
+
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -14,6 +20,7 @@ def create_app():
     app.config["SECRET_KEY"] = "dev"
     app.config["SESSION_COOKIE_SAMESITE"] = "None"
     app.config["SESSION_COOKIE_SECURE"] = True
+    app.template_filter('brl')(format_brl)
     os.makedirs(app.instance_path, exist_ok=True)
     db_path = os.path.join(app.instance_path, "kanban.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
