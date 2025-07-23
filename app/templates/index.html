@@ -62,15 +62,15 @@
             </div>
             <div class="kanban-cards" id="column-{{ column.id }}">
                 {% for card in column.cards %}
-                <div class="kanban-card" 
+                    <div class="kanban-card"
                      draggable="true"
                      data-card-id="{{ card.id }}"
                      data-title="{{ card.title }}"
-                     data-description="{{ card.description|e }}"
+                     data-valor="{{ card.valor_negociado }}"
                      data-column-id="{{ column.id }}"
                      onclick="openEditModal(this)">
                     <div class="card-title">{{ card.title }}</div>
-                    <div class="card-desc">{{ card.description }}</div>
+                    <div class="card-desc">{{ card.valor_negociado }}</div>
                 </div>
                 {% endfor %}
             </div>
@@ -98,8 +98,8 @@
                   <input type="text" class="form-control" id="modalCardTitle" name="title" required>
               </div>
               <div class="mb-3">
-                  <label for="modalCardDescription" class="form-label">Descrição</label>
-                  <input type="text" class="form-control" id="modalCardDescription" name="description">
+                  <label for="modalCardValor" class="form-label">Valor negociado</label>
+                  <input type="number" step="0.01" class="form-control" id="modalCardValor" name="valor_negociado">
               </div>
               {% for field in custom_fields %}
               <div class="mb-3">
@@ -172,8 +172,8 @@
               <input type="text" class="form-control" id="modalAddCardTitle" name="title" required>
             </div>
             <div class="mb-3">
-              <label for="modalAddCardDescription" class="form-label">Descrição</label>
-              <input type="text" class="form-control" id="modalAddCardDescription" name="description">
+              <label for="modalAddCardValor" class="form-label">Valor negociado</label>
+              <input type="number" step="0.01" class="form-control" id="modalAddCardValor" name="valor_negociado">
             </div>
             {% for field in custom_fields %}
             <div class="mb-3">
@@ -220,18 +220,18 @@ function openAddCardModal(columnId) {
     document.getElementById('modalAddCardColumnId').value = columnId;
     document.getElementById('addCardForm').action = "/add_card/" + columnId;
     document.getElementById('modalAddCardTitle').value = '';
-    document.getElementById('modalAddCardDescription').value = '';
+    document.getElementById('modalAddCardValor').value = '';
     new bootstrap.Modal(document.getElementById('addCardModal')).show();
 }
 
 function openEditModal(cardDiv) {
     const cardId = cardDiv.getAttribute('data-card-id');
     const title = cardDiv.getAttribute('data-title');
-    const description = cardDiv.getAttribute('data-description') || '';
+    const valor = cardDiv.getAttribute('data-valor') || '';
 
     document.getElementById('modalCardId').value = cardId;
     document.getElementById('modalCardTitle').value = title;
-    document.getElementById('modalCardDescription').value = description;
+    document.getElementById('modalCardValor').value = valor;
     document.getElementById('editCardForm').action = "/edit_card/" + cardId;
 
     // Handler delete button
