@@ -12,10 +12,14 @@
     <span>{{ emp.nome }} (Account ID: {{ emp.account_id }})</span>
     <div>
       <a href="{{ url_for('superadmin.empresa_detail', empresa_id=emp.id, token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Visualizar</a>
-      <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token'], next=url_for('superadmin.dashboard', token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+      <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token'], next=url_for('superadmin.dashboard', token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">
+        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+      </a>
       <form method="post" action="{{ url_for('superadmin.delete_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}" class="d-inline">
         <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
-        <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+          <i class="fa-solid fa-trash me-1"></i>Deletar
+        </button>
       </form>
     </div>
   </li>

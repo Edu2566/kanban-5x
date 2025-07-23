@@ -2,13 +2,24 @@
 {% block title %}Editar Empresa{% endblock %}
 {% block content %}
 <h2>Editar Empresa</h2>
-<form method="post">
-    <label>Nome Empresa</label><input type="text" name="nome" value="{{ empresa.nome }}"><br>
-    <label>Account ID</label><input type="text" name="account_id" value="{{ empresa.account_id }}"><br>
-    <label>Modo escuro</label><input type="checkbox" name="dark_mode" {% if empresa.dark_mode %}checked{% endif %}><br>
-    <label>Custom Fields (JSON)</label><br>
-    <textarea name="custom_fields" rows="4" class="form-control">{{ empresa.custom_fields|tojson }}</textarea>
-    <small class="text-muted">Informe uma lista JSON de até 8 objetos { "name": "...", "type": "text|number|boolean" }.</small><br>
+<form method="post" class="mb-4">
+    <div class="mb-3">
+        <label class="form-label">Nome Empresa</label>
+        <input type="text" name="nome" value="{{ empresa.nome }}" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Account ID</label>
+        <input type="text" name="account_id" value="{{ empresa.account_id }}" class="form-control">
+    </div>
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" name="dark_mode" id="edit_dark_mode" {% if empresa.dark_mode %}checked{% endif %}>
+        <label class="form-check-label" for="edit_dark_mode">Modo escuro</label>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Custom Fields (JSON)</label>
+        <textarea name="custom_fields" rows="4" class="form-control">{{ empresa.custom_fields|tojson }}</textarea>
+        <small class="text-muted">Informe uma lista JSON de até 8 objetos { "name": "...", "type": "text|number|boolean" }.</small>
+    </div>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
     <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Salvar</button>
