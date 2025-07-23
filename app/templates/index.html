@@ -55,9 +55,6 @@
                 </div>
                 {% endfor %}
             </div>
-            <button class="btn btn-success btn-sm w-100 mt-2" onclick="openAddCardModal({{ column.id }}); return false;">
-                <i class="fa-solid fa-plus"></i> Adicionar Card
-            </button>
         </div>
         {% endfor %}
     </div>
@@ -159,7 +156,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
           </div>
           <div class="modal-body">
-            <input type="hidden" name="column_id" id="modalAddCardColumnId">
+            <div class="mb-3">
+              <label for="addCardColumnSelect" class="form-label">Coluna</label>
+              <select id="addCardColumnSelect" class="form-select">
+                {% for col in columns %}
+                  <option value="{{ col.id }}">{{ col.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
             <div class="mb-3">
               <label for="modalAddCardTitle" class="form-label">Título</label>
               <input type="text" class="form-control" id="modalAddCardTitle" name="title" required>

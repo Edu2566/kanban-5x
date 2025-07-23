@@ -13,8 +13,12 @@ function openEditColumnModal(columnId, columnName) {
 }
 
 function openAddCardModal(columnId) {
-    document.getElementById('modalAddCardColumnId').value = columnId;
-    document.getElementById('addCardForm').action = "/add_card/" + columnId;
+    const select = document.getElementById('addCardColumnSelect');
+    if (select) {
+        select.value = columnId;
+    }
+    const form = document.getElementById('addCardForm');
+    form.action = "/add_card/" + columnId;
     document.getElementById('modalAddCardTitle').value = '';
     document.getElementById('modalAddCardValor').value = '';
     document.getElementById('modalAddCardVendedor').value = currentUserId;
@@ -63,6 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 .catch(() => location.reload());
+        });
+    }
+
+    const addCardColumnSelect = document.getElementById('addCardColumnSelect');
+    const addCardForm = document.getElementById('addCardForm');
+    if (addCardColumnSelect && addCardForm) {
+        addCardColumnSelect.addEventListener('change', () => {
+            addCardForm.action = "/add_card/" + addCardColumnSelect.value;
         });
     }
 
