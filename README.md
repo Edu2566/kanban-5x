@@ -12,6 +12,11 @@ addition the following fixed fields are available:
 Regular users only see cards where they are set as the vendor.  Users with the
 `gestor` role can access all cards for their company.
 
+## Front-end JavaScript
+
+All browser-side logic should be stored under `app/static/js/`.  Templates load
+these files using `url_for('static', filename='js/kanban.js')`.
+
 ## Database migrations
 
 The project uses **Flask-Migrate** to manage database schema changes.
