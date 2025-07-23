@@ -18,3 +18,22 @@
 .kanban-header .badge {
     vertical-align: middle;
 }
+
+/* Dark mode overrides */
+.dark-mode body {
+    background: #323232;
+    color: #fff;
+}
+.dark-mode .kanban-column {
+    background: #181818;
+}
+.dark-mode .kanban-card {
+    background: linear-gradient(135deg, #3a3a3a 80%, #2a2a2a 100%);
+    color: #fff;
+}
+.dark-mode .kanban-card:active {
+    background: #444;
+}
+.dark-mode .kanban-card .card-desc {
+    color: #fff;
+}
