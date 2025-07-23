@@ -31,7 +31,13 @@ def index():
     columns = Column.query.filter_by(empresa_id=empresa_id).all()
     # Definições de campos customizados (JSON) por empresa
     custom_fields = g.user.empresa.custom_fields
-    return render_template('index.html', columns=columns, custom_fields=custom_fields)
+    usuarios = g.user.empresa.usuarios
+    return render_template(
+        'index.html',
+        columns=columns,
+        custom_fields=custom_fields,
+        usuarios=usuarios,
+    )
 
 # Column CRUD
 @main.route('/add_column', methods=['POST'])
@@ -75,13 +81,17 @@ def add_card(column_id):
     # Campos fixos
     title = request.form['title']
     valor_negociado = request.form.get('valor_negociado', type=float)
+    vendedor_id = request.form.get('vendedor_id', type=int)
+    if g.user.role != 'gestor':
+        vendedor_id = g.user.id
+    vendedor_id = vendedor_id or g.user.id
     # Monta dados customizados conforme definições em Empresa.custom_fields
     custom_data = build_custom_data(request.form)
     card = Card(
         title=title,
         valor_negociado=valor_negociado,
         column_id=column_id,
-        vendedor_id=g.user.id,
+        vendedor_id=vendedor_id,
         custom_data=custom_data,
     )
     db.session.add(card)
@@ -98,6 +108,10 @@ def edit_card(card_id):
         return 'Acesso negado', 403
     card.title = request.form['title']
     card.valor_negociado = request.form.get('valor_negociado', type=float)
+    if g.user.role == 'gestor':
+        novo_vendedor = request.form.get('vendedor_id', type=int)
+        if novo_vendedor:
+            card.vendedor_id = novo_vendedor
     # Atualiza custom_data com os campos definidos
     custom_data = build_custom_data(request.form)
     card.custom_data = custom_data
