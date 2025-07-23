@@ -53,6 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (data.success) {
                         document.body.classList.toggle('dark-mode', data.dark_mode);
+                        const icon = toggleForm.querySelector('i');
+                        if (icon) {
+                            icon.classList.toggle('fa-sun', data.dark_mode);
+                            icon.classList.toggle('fa-moon', !data.dark_mode);
+                        }
                     } else {
                         location.reload();
                     }
