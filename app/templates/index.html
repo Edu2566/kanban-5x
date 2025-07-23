@@ -67,10 +67,13 @@
                      data-card-id="{{ card.id }}"
                      data-title="{{ card.title }}"
                      data-valor="{{ card.valor_negociado }}"
+                     data-vendedor-id="{{ card.vendedor_id }}"
                      data-column-id="{{ column.id }}"
                      onclick="openEditModal(this)">
                     <div class="card-title">{{ card.title }}</div>
-                    <div class="card-desc">{{ card.valor_negociado }}</div>
+                    <div class="card-desc">
+                        {{ card.valor_negociado }} - {{ card.vendedor.user_name }}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -100,6 +103,14 @@
               <div class="mb-3">
                   <label for="modalCardValor" class="form-label">Valor negociado</label>
                   <input type="number" step="0.01" class="form-control" id="modalCardValor" name="valor_negociado">
+              </div>
+              <div class="mb-3">
+                  <label for="modalCardVendedor" class="form-label">Vendedor</label>
+                  <select id="modalCardVendedor" name="vendedor_id" class="form-select">
+                      {% for usuario in g.user.empresa.usuarios %}
+                      <option value="{{ usuario.id }}" {% if usuario.id == g.user.id %}selected{% endif %}>{{ usuario.user_name }}</option>
+                      {% endfor %}
+                  </select>
               </div>
               {% for field in custom_fields %}
               <div class="mb-3">
@@ -175,6 +186,14 @@
               <label for="modalAddCardValor" class="form-label">Valor negociado</label>
               <input type="number" step="0.01" class="form-control" id="modalAddCardValor" name="valor_negociado">
             </div>
+            <div class="mb-3">
+              <label for="modalAddCardVendedor" class="form-label">Vendedor</label>
+              <select id="modalAddCardVendedor" name="vendedor_id" class="form-select">
+                {% for usuario in g.user.empresa.usuarios %}
+                <option value="{{ usuario.id }}" {% if usuario.id == g.user.id %}selected{% endif %}>{{ usuario.user_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
             {% for field in custom_fields %}
             <div class="mb-3">
               <label class="form-label">{{ field.name }}</label>
@@ -203,6 +222,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+const currentUserId = {{ g.user.id }};
 function openEditColumnModal(columnId, columnName) {
     document.getElementById('modalColumnId').value = columnId;
     document.getElementById('modalColumnName').value = columnName;
@@ -221,6 +241,7 @@ function openAddCardModal(columnId) {
     document.getElementById('addCardForm').action = "/add_card/" + columnId;
     document.getElementById('modalAddCardTitle').value = '';
     document.getElementById('modalAddCardValor').value = '';
+    document.getElementById('modalAddCardVendedor').value = currentUserId;
     new bootstrap.Modal(document.getElementById('addCardModal')).show();
 }
 
@@ -228,10 +249,12 @@ function openEditModal(cardDiv) {
     const cardId = cardDiv.getAttribute('data-card-id');
     const title = cardDiv.getAttribute('data-title');
     const valor = cardDiv.getAttribute('data-valor') || '';
+    const vendedor = cardDiv.getAttribute('data-vendedor-id') || '';
 
     document.getElementById('modalCardId').value = cardId;
     document.getElementById('modalCardTitle').value = title;
     document.getElementById('modalCardValor').value = valor;
+    document.getElementById('modalCardVendedor').value = vendedor;
     document.getElementById('editCardForm').action = "/edit_card/" + cardId;
 
     // Handler delete button
