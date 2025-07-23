@@ -39,11 +39,12 @@
         .add-form input, .add-form button { border-radius: 8px; }
     </style>
 </head>
-<body>
+{% set dark = g.user.empresa.dark_mode %}
+<body class="{{ 'dark-mode' if dark else '' }}">
 <div class="container py-4">
     <h2 class="mb-4 text-center">Kanban Board</h2>
     <div class="mb-3 text-end">
-        <form action="{{ url_for('main.toggle_theme') }}" method="post">
+        <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
             <button type="submit" class="btn btn-outline-secondary">Modo Escuro/Claro</button>
         </form>
     </div>
@@ -276,6 +277,23 @@ function openEditModal(cardDiv) {
 
 // Drag and Drop com SortableJS
 document.addEventListener('DOMContentLoaded', () => {
+    const toggleForm = document.getElementById('toggleThemeForm');
+    if (toggleForm) {
+        toggleForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            fetch(toggleForm.action, {method: 'POST'})
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        document.body.classList.toggle('dark-mode', data.dark_mode);
+                    } else {
+                        location.reload();
+                    }
+                })
+                .catch(() => location.reload());
+        });
+    }
+
     const columns = document.querySelectorAll('.kanban-cards');
     columns.forEach(column => {
         new Sortable(column, {

@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='superadmin.css') }}">
 </head>
-<body>
+{% set dark = g.user.empresa.dark_mode %}
+<body class="{{ 'dark-mode' if dark else '' }}">
 <div class="container py-4">
   {% block content %}{% endblock %}
 </div>
