@@ -2,6 +2,16 @@
 
 This project is a simple Kanban board application.
 
+Each card may store up to eight **custom fields** defined by the company.  In
+addition the following fixed fields are available:
+
+* **Título** – basic title of the card
+* **Valor negociado** – numeric value
+* **Vendedor** – user responsible for the card
+
+Regular users only see cards where they are set as the vendor.  Users with the
+`gestor` role can access all cards for their company.
+
 ## Database migrations
 
 The project uses **Flask-Migrate** to manage database schema changes.
