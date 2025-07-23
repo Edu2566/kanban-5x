@@ -1,0 +1,40 @@
+{% extends 'superadmin/layout.html' %}
+{% block title %}Empresa {{ empresa.nome }}{% endblock %}
+{% block content %}
+<h2>{{ empresa.nome }}</h2>
+<p>Account ID: {{ empresa.account_id }}</p>
+<div class="mb-3">
+  <a href="{{ url_for('superadmin.create_usuario', token=session['superadmin_token'], empresa_id=empresa.id, next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-secondary btn-sm">Novo Usuário/Gestor</a>
+  <a href="{{ url_for('superadmin.create_column', token=session['superadmin_token'], empresa_id=empresa.id, next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-secondary btn-sm">Nova Coluna</a>
+</div>
+<h3>Usuários</h3>
+<ul>
+  {% for usr in usuarios %}
+  <li class="d-flex justify-content-between align-items-center">
+    <span>{{ usr.user_name }} - {{ usr.user_email }}</span>
+    <div>
+      <a href="{{ url_for('superadmin.edit_usuario', usuario_id=usr.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+      <form method="post" action="{{ url_for('superadmin.delete_usuario', usuario_id=usr.id, token=session['superadmin_token']) }}" class="d-inline">
+        <input type="hidden" name="next" value="{{ url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token']) }}">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+      </form>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+<h3>Colunas</h3>
+<ul>
+  {% for col in columns %}
+  <li class="d-flex justify-content-between align-items-center">
+    <span>{{ col.name }}</span>
+    <div>
+      <a href="{{ url_for('superadmin.edit_column', column_id=col.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+      <form method="post" action="{{ url_for('superadmin.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
+        <input type="hidden" name="next" value="{{ url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token']) }}">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
+      </form>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

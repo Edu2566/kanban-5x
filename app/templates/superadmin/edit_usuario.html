@@ -19,6 +19,7 @@
         <option value="superadmin" {% if usuario.role == 'superadmin' %}selected{% endif %}>Super-Admin</option>
     </select>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Salvar</button>
 </form>
 {% endblock %}
