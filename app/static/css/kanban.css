@@ -1,0 +1,31 @@
+body { background: #f3f6fa; }
+.kanban-board { display: flex; gap: 1.5rem; overflow-x: auto; }
+.kanban-column {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 30px #0001;
+    min-width: 340px;
+    padding: 1.3rem;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+.kanban-header { font-weight: 600; font-size: 1.2rem; margin-bottom: .8rem; }
+.kanban-cards { flex: 1; min-height: 10px; }
+.kanban-card {
+    background: linear-gradient(135deg, #f0f3fc 80%, #dde7fa 100%);
+    border-radius: 16px;
+    box-shadow: 0 2px 10px #0002;
+    margin-bottom: 1rem;
+    padding: 1rem 1.2rem;
+    transition: box-shadow .2s;
+    cursor: grab;
+    border: none;
+    position: relative;
+}
+.kanban-card:hover { box-shadow: 0 4px 18px #0003; }
+.kanban-card .card-title { font-weight: 500; margin-bottom: .4rem; }
+.kanban-card .card-desc { color: #4d5a6a; font-size: .98rem; }
+.modal-header { background: #f0f3fc; border-bottom: none; }
+.modal-footer { border-top: none; }
+.add-form input, .add-form button { border-radius: 8px; }
