@@ -61,7 +61,7 @@
                 </span>
             </div>
             <div class="kanban-cards" id="column-{{ column.id }}">
-                {% for card in column.cards %}
+                {% for card in column.filtered_cards %}
                     <div class="kanban-card"
                      draggable="true"
                      data-card-id="{{ card.id }}"
