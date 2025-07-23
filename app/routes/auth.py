@@ -43,39 +43,36 @@ def logout():
     return redirect(url_for('main.index'))
 
 
+def role_required(*roles):
+    """Ensure the logged user has one of the given roles."""
+
+    def decorator(view):
+        @wraps(view)
+        def wrapped_view(**kwargs):
+            if g.get('user') is None:
+                return redirect(url_for('auth.login_page'))
+            if roles and g.user.role not in roles:
+                return "Acesso negado", 403
+            return view(**kwargs)
+
+        return wrapped_view
+
+    return decorator
+
+
 def login_required(view):
     """Ensure the user is logged in."""
 
-    @wraps(view)
-    def wrapped_view(**kwargs):
-        if g.get('user') is None:
-            return redirect(url_for('auth.login_page'))
-        return view(**kwargs)
-
-    return wrapped_view
+    return role_required()(view)
 
 def superadmin_required(view):
     """Allow access only for super-admins."""
-    @wraps(view)
-    def wrapped_view(**kwargs):
-        if g.get('user') is None:
-            return redirect(url_for('auth.login_page'))
-        if g.user.role != 'superadmin':
-            return 'Acesso restrito ao Super-Admin', 403
-        return view(**kwargs)
-    return wrapped_view
+
+    return role_required('superadmin')(view)
 
 
 def gestor_required(view):
     """Allow access only for gestores."""
 
-    @wraps(view)
-    def wrapped_view(**kwargs):
-        if g.get('user') is None:
-            return redirect(url_for('auth.login_page'))
-        if g.user.role != 'gestor':
-            return 'Acesso restrito aos gestores', 403
-        return view(**kwargs)
-
-    return wrapped_view
+    return role_required('gestor')(view)
 
