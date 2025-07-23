@@ -39,6 +39,12 @@ def index():
         else:
             column.filtered_cards = list(column.cards)
 
+        # Extra information used in the template
+        column.cards_count = len(column.filtered_cards)
+        column.valor_total = sum(
+            card.valor_negociado or 0 for card in column.filtered_cards
+        )
+
     # Definições de campos customizados (JSON) por empresa
     custom_fields = g.user.empresa.custom_fields
     vendedores = g.user.empresa.usuarios
