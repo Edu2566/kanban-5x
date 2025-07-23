@@ -12,18 +12,19 @@
 {% set dark = g.user.empresa.dark_mode %}
 <body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
 <div class="container py-4">
-    <div class="mb-3 text-end">
+    <header class="d-flex justify-content-end gap-2 mb-4">
         <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
             <button type="submit" class="btn btn-outline-secondary py-2 px-3">
-                <i class="fa-regular fa-moon me-1"></i>Modo Escuro/Claro
+                <i class="fa-regular {{ 'fa-sun' if dark else 'fa-moon' }}"></i>
             </button>
         </form>
-    </div>
-    {% if g.user.role == 'superadmin' %}
-    <div class="mb-4 text-end">
+        <button type="button" class="btn btn-success py-2 px-3" onclick="openAddCardModal({{ columns[0].id }}); return false;">
+            <i class="fa-solid fa-plus me-1"></i>Adicionar Card
+        </button>
+        {% if g.user.role == 'superadmin' %}
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
-    </div>
-    {% endif %}
+        {% endif %}
+    </header>
     <div class="kanban-board row flex-wrap g-3">
         {% for column in columns %}
         <div class="kanban-column col-12 col-sm-6 col-md-4 col-lg-3" data-column-id="{{ column.id }}">
