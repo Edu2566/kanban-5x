@@ -53,6 +53,9 @@
             <div class="kanban-header d-flex align-items-center justify-content-between mb-2">
                 <span class="fw-bold fs-5">
                     {{ column.name }}
+                    <span class="ms-1 badge bg-secondary">
+                        {{ column.cards_count }} • {{ column.valor_total|brl }}
+                    </span>
                     {% if g.user.role == 'superadmin' %}
                     <a href="#" class="ms-2" onclick="openEditColumnModal({{ column.id }}, '{{ column.name|tojson }}'); return false;" title="Editar coluna">
                         <i class="fa-regular fa-pen-to-square" style="font-size:1.0em;"></i>

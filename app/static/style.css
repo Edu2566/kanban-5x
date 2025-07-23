@@ -13,3 +13,8 @@
     box-shadow: 0 6px 18px #0003;
     background: #e5eefe;
 }
+
+/* Align badge with column name */
+.kanban-header .badge {
+    vertical-align: middle;
+}
