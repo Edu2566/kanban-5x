@@ -25,11 +25,19 @@ def check_superadmin_token():
 @superadmin_bp.route('/')
 def dashboard():
     empresas = Empresa.query.all()
-    usuarios = Usuario.query.all()
-    columns = Column.query.all()
+    return render_template('superadmin/dashboard.html', empresas=empresas)
+
+
+@superadmin_bp.route('/empresa/<int:empresa_id>')
+def empresa_detail(empresa_id):
+    empresa = Empresa.query.get_or_404(empresa_id)
+    usuarios = Usuario.query.filter_by(empresa_id=empresa_id).all()
+    columns = Column.query.filter_by(empresa_id=empresa_id).all()
     return render_template(
-        'superadmin/dashboard.html', empresas=empresas,
-        usuarios=usuarios, columns=columns
+        'superadmin/empresa_detail.html',
+        empresa=empresa,
+        usuarios=usuarios,
+        columns=columns,
     )
 
 
@@ -48,7 +56,10 @@ def create_empresa():
                           custom_fields=cf[:8])
         db.session.add(empresa)
         db.session.commit()
-        return redirect(url_for('superadmin.dashboard'))
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/create_empresa.html')
 
 
@@ -66,7 +77,10 @@ def edit_empresa(empresa_id):
             cf = []
         empresa.custom_fields = cf[:8]
         db.session.commit()
-        return redirect(url_for('superadmin.dashboard'))
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/edit_empresa.html', empresa=empresa)
 
 
@@ -75,7 +89,10 @@ def delete_empresa(empresa_id):
     empresa = Empresa.query.get_or_404(empresa_id)
     db.session.delete(empresa)
     db.session.commit()
-    return redirect(url_for('superadmin.dashboard'))
+    next_url = request.form.get('next') or request.args.get('next')
+    if next_url:
+        return redirect(next_url)
+    return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
 
 
 @superadmin_bp.route('/create_usuario', methods=['GET', 'POST'])
@@ -91,7 +108,10 @@ def create_usuario():
         )
         db.session.add(usuario)
         db.session.commit()
-        return redirect(url_for('superadmin.dashboard'))
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/create_usuario.html', empresas=empresas)
 
 
@@ -106,7 +126,10 @@ def edit_usuario(usuario_id):
         usuario.role = request.form['role']
         usuario.empresa_id = int(request.form['empresa_id'])
         db.session.commit()
-        return redirect(url_for('superadmin.dashboard'))
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/edit_usuario.html', usuario=usuario, empresas=empresas)
 
 
@@ -115,7 +138,10 @@ def delete_usuario(usuario_id):
     usuario = Usuario.query.get_or_404(usuario_id)
     db.session.delete(usuario)
     db.session.commit()
-    return redirect(url_for('superadmin.dashboard'))
+    next_url = request.form.get('next') or request.args.get('next')
+    if next_url:
+        return redirect(next_url)
+    return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
 
 
 @superadmin_bp.route('/create_column', methods=['GET', 'POST'])
@@ -127,6 +153,9 @@ def create_column():
         column = Column(name=name, empresa_id=empresa_id)
         db.session.add(column)
         db.session.commit()
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
         return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/create_column.html', empresas=empresas)
 
@@ -139,6 +168,9 @@ def edit_column(column_id):
         column.name = request.form['name']
         column.empresa_id = int(request.form['empresa_id'])
         db.session.commit()
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
         return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))
     return render_template('superadmin/edit_column.html', column=column, empresas=empresas)
 
@@ -148,4 +180,7 @@ def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
     db.session.delete(column)
     db.session.commit()
+    next_url = request.form.get('next') or request.args.get('next')
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for('superadmin.dashboard', token=session.get('superadmin_token')))

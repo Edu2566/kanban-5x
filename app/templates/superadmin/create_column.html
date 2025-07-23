@@ -6,12 +6,14 @@
     <label>Nome da Coluna</label>
     <input type="text" name="name" required><br>
     <label>Empresa</label>
+    {% set selected_emp = request.args.get('empresa_id', type=int) %}
     <select name="empresa_id">
         {% for emp in empresas %}
-            <option value="{{ emp.id }}">{{ emp.nome }}</option>
+            <option value="{{ emp.id }}" {% if selected_emp == emp.id %}selected{% endif %}>{{ emp.nome }}</option>
         {% endfor %}
     </select><br>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Criar</button>
 </form>
 {% endblock %}

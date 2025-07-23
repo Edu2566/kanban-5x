@@ -4,7 +4,6 @@
 <h2>Painel Super-Admin</h2>
 <div class="mb-3">
   <a href="{{ url_for('superadmin.create_empresa', token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Nova Empresa</a>
-  <a href="{{ url_for('superadmin.create_usuario', token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Novo Usuário/Gestor</a>
 </div>
 <h3>Empresas</h3>
 <ul>
@@ -12,8 +11,10 @@
   <li class="d-flex justify-content-between align-items-center">
     <span>{{ emp.nome }} (Account ID: {{ emp.account_id }})</span>
     <div>
-      <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+      <a href="{{ url_for('superadmin.empresa_detail', empresa_id=emp.id, token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Visualizar</a>
+      <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token'], next=url_for('superadmin.dashboard', token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">Editar</a>
       <form method="post" action="{{ url_for('superadmin.delete_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}" class="d-inline">
+        <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
         <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
       </form>
     </div>
@@ -21,34 +22,4 @@
   {% endfor %}
 </ul>
 
-<h3>Usuários</h3>
-<ul>
-  {% for usr in usuarios %}
-  <li class="d-flex justify-content-between align-items-center">
-    <span>{{ usr.user_name }} - {{ usr.user_email }}</span>
-    <div>
-      <a href="{{ url_for('superadmin.edit_usuario', usuario_id=usr.id, token=session['superadmin_token']) }}" class="btn btn-outline-primary btn-sm">Editar</a>
-      <form method="post" action="{{ url_for('superadmin.delete_usuario', usuario_id=usr.id, token=session['superadmin_token']) }}" class="d-inline">
-        <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
-      </form>
-    </div>
-  </li>
-  {% endfor %}
-</ul>
-
-<h3>Colunas</h3>
-<ul>
-  {% for col in columns %}
-  <li class="d-flex justify-content-between align-items-center">
-    <span>{{ col.name }} (Empresa: {{ col.empresa.nome }})</span>
-    <div>
-      <a href="{{ url_for('superadmin.edit_column', column_id=col.id, token=session['superadmin_token']) }}" class="btn btn-outline-primary btn-sm">Editar</a>
-      <form method="post" action="{{ url_for('superadmin.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
-        <button type="submit" class="btn btn-outline-danger btn-sm">Deletar</button>
-      </form>
-    </div>
-  </li>
-  {% endfor %}
-</ul>
-<a href="{{ url_for('superadmin.create_column', token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Nova Coluna</a>
 {% endblock %}

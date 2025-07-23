@@ -7,9 +7,10 @@
     <label>User Email</label><input type="email" name="user_email"><br>
     <label>User Name</label><input type="text" name="user_name"><br>
     <label>Empresa</label>
+    {% set selected_emp = request.args.get('empresa_id', type=int) %}
     <select name="empresa_id">
         {% for emp in empresas %}
-            <option value="{{ emp.id }}">{{ emp.nome }}</option>
+            <option value="{{ emp.id }}" {% if selected_emp == emp.id %}selected{% endif %}>{{ emp.nome }}</option>
         {% endfor %}
     </select><br>
     <label>Role</label>
@@ -19,6 +20,7 @@
         <option value="superadmin">Super-Admin</option>
     </select>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Criar</button>
 </form>
 {% endblock %}
