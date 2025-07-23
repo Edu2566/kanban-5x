@@ -24,7 +24,7 @@ class Usuario(db.Model):
     role = db.Column(db.String(50), nullable=False)
     empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id'), nullable=False)
 
-    cards_vendedor = db.relationship('Card', backref='vendedor', lazy=True)
+    cards_vendedor = db.relationship('Card', back_populates='vendedor', lazy=True)
 
 
 class Column(db.Model):
@@ -45,7 +45,7 @@ class Card(db.Model):
     valor_negociado = db.Column(db.Float)
     column_id = db.Column(db.Integer, db.ForeignKey('columns.id'), nullable=False)
     vendedor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
-    vendedor = db.relationship('Usuario', backref='cards_vendedor')
+    vendedor = db.relationship('Usuario', back_populates='cards_vendedor')
     # dados customizáveis do card conforme definições em Empresa.custom_fields
     custom_data = db.Column(db.JSON, nullable=False, default=dict)
 
