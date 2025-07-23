@@ -29,6 +29,16 @@ def build_custom_data(form):
 def index():
     empresa_id = session.get('empresa_id', g.user.empresa_id)
     columns = Column.query.filter_by(empresa_id=empresa_id).all()
+
+    # Filter cards for regular users so they only see their own
+    for column in columns:
+        if g.user.role == 'user':
+            column.filtered_cards = [
+                card for card in column.cards if card.vendedor_id == g.user.id
+            ]
+        else:
+            column.filtered_cards = list(column.cards)
+
     # Definições de campos customizados (JSON) por empresa
     custom_fields = g.user.empresa.custom_fields
     usuarios = g.user.empresa.usuarios
