@@ -22,6 +22,13 @@ function openAddCardModal(columnId) {
     document.getElementById('modalAddCardTitle').value = '';
     document.getElementById('modalAddCardValor').value = '';
     document.getElementById('modalAddCardVendedor').value = currentUserId;
+    document.querySelectorAll('#addCardModal [name^="custom_"]').forEach(input => {
+        if (input.type === 'checkbox') {
+            input.checked = false;
+        } else {
+            input.value = '';
+        }
+    });
     new bootstrap.Modal(document.getElementById('addCardModal')).show();
 }
 
@@ -50,12 +57,6 @@ function openEditModal(cardDiv) {
         const val = customData[key];
         if (input.type === 'checkbox') {
             input.checked = Boolean(val);
-        } else if (input.type === 'number') {
-            if (val !== undefined && val !== null) {
-                input.value = val;
-            } else {
-                input.value = '';
-            }
         } else {
             input.value = val !== undefined && val !== null ? val : '';
         }
