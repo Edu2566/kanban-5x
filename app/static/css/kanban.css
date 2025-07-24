@@ -31,14 +31,9 @@ body {
     flex-wrap: wrap;
     gap: .25rem;
 }
-
 .kanban-header .badge {
     white-space: normal;
     overflow-wrap: anywhere;
-}
-
-.kanban-header .column-name {
-    flex-grow: 1;
 }
 .kanban-cards {
     flex: 1;
