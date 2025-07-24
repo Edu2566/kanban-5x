@@ -4,6 +4,7 @@ body {
 
 .kanban-board-wrapper {
     overflow-x: auto;
+    padding: 1%;
 }
 
 .kanban-board {
