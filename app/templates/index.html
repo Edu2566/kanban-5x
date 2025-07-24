@@ -18,9 +18,15 @@
                 <i class="fa-regular {{ 'fa-sun' if dark else 'fa-moon' }}"></i>
             </button>
         </form>
+        {% if columns %}
         <button type="button" class="btn btn-success py-2 px-3" onclick="openAddCardModal({{ columns[0].id }}); return false;">
             <i class="fa-solid fa-plus me-1"></i>Adicionar Card
         </button>
+        {% else %}
+        <button type="button" class="btn btn-success py-2 px-3" disabled title="Crie uma coluna primeiro">
+            <i class="fa-solid fa-plus me-1"></i>Adicionar Card
+        </button>
+        {% endif %}
         {% if g.user.role == 'superadmin' %}
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
         {% endif %}
