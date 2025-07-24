@@ -29,8 +29,13 @@ body {
     font-size: 1.2rem;
     margin-bottom: .8rem;
     color: #0747A6;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: .25rem;
+}
+.kanban-header .column-name {
+    font-size: 1rem;
+    word-break: break-word;
+    min-width: 0;
 }
 .kanban-header .badge {
     white-space: normal;
