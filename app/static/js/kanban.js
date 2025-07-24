@@ -21,6 +21,7 @@ function openAddCardModal(columnId) {
     form.action = "/add_card/" + columnId;
     document.getElementById('modalAddCardTitle').value = '';
     document.getElementById('modalAddCardValor').value = '';
+    document.getElementById('modalAddCardConversa').value = '';
     document.getElementById('modalAddCardVendedor').value = currentUserId;
     document.querySelectorAll('#addCardModal [name^="custom_"]').forEach(input => {
         if (input.type === 'checkbox') {
@@ -36,6 +37,7 @@ function openEditModal(cardDiv) {
     const cardId = cardDiv.getAttribute('data-card-id');
     const title = cardDiv.getAttribute('data-title');
     const valor = cardDiv.getAttribute('data-valor') || '';
+    const conversa = cardDiv.getAttribute('data-conversa') || '';
     const vendedor = cardDiv.getAttribute('data-vendedor-id') || '';
     const customRaw = cardDiv.getAttribute('data-custom') || '{}';
     let customData = {};
@@ -48,6 +50,7 @@ function openEditModal(cardDiv) {
     document.getElementById('modalCardId').value = cardId;
     document.getElementById('modalCardTitle').value = title;
     document.getElementById('modalCardValor').value = valor;
+    document.getElementById('modalCardConversa').value = conversa;
     document.getElementById('modalCardVendedor').value = vendedor;
     document.getElementById('editCardForm').action = "/edit_card/" + cardId;
 

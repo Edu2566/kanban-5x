@@ -51,13 +51,19 @@
                      data-card-id="{{ card.id }}"
                      data-title="{{ card.title }}"
                      data-valor="{{ card.valor_negociado }}"
+                     data-conversa="{{ card.conversa|default('') }}"
                      data-vendedor-id="{{ card.vendedor_id }}"
                      data-column-id="{{ column.id }}"
                      data-custom='{{ card.custom_data | tojson }}'
-                     onclick="openEditModal(this)">
+                    onclick="openEditModal(this)">
                     <div class="card-title">{{ card.title }}</div>
                     <div class="card-desc">
                         {{ card.valor_negociado }} - {{ card.vendedor.user_name }}
+                        {% if card.conversa %}
+                        <a href="{{ card.conversa }}" target="_blank" class="ms-2 text-decoration-none">
+                            <i class="fa-solid fa-eye text-primary"></i>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -85,6 +91,10 @@
               <div class="mb-3">
                   <label for="modalCardValor" class="form-label">Valor negociado</label>
                   <input type="number" step="0.01" class="form-control" id="modalCardValor" name="valor_negociado">
+              </div>
+              <div class="mb-3">
+                  <label for="modalCardConversa" class="form-label">Conversa</label>
+                  <input type="url" class="form-control" id="modalCardConversa" name="conversa">
               </div>
               <div class="mb-3">
                   <label for="modalCardVendedor" class="form-label">Vendedor</label>
@@ -183,13 +193,17 @@
               <label for="modalAddCardTitle" class="form-label">Título</label>
               <input type="text" class="form-control" id="modalAddCardTitle" name="title" required>
             </div>
-            <div class="mb-3">
-              <label for="modalAddCardValor" class="form-label">Valor negociado</label>
-              <input type="number" step="0.01" class="form-control" id="modalAddCardValor" name="valor_negociado">
-            </div>
-            <div class="mb-3">
-              <label for="modalAddCardVendedor" class="form-label">Vendedor</label>
-              <select id="modalAddCardVendedor" name="vendedor_id" class="form-select">
+              <div class="mb-3">
+                <label for="modalAddCardValor" class="form-label">Valor negociado</label>
+                <input type="number" step="0.01" class="form-control" id="modalAddCardValor" name="valor_negociado">
+              </div>
+              <div class="mb-3">
+                <label for="modalAddCardConversa" class="form-label">Conversa</label>
+                <input type="url" class="form-control" id="modalAddCardConversa" name="conversa">
+              </div>
+              <div class="mb-3">
+                <label for="modalAddCardVendedor" class="form-label">Vendedor</label>
+                <select id="modalAddCardVendedor" name="vendedor_id" class="form-select">
                 {% for vendedor in vendedores %}
                 <option value="{{ vendedor.id }}" {% if vendedor.id == g.user.id %}selected{% endif %}>{{ vendedor.user_name }}</option>
                 {% endfor %}
