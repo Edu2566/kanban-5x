@@ -30,12 +30,36 @@ function openEditModal(cardDiv) {
     const title = cardDiv.getAttribute('data-title');
     const valor = cardDiv.getAttribute('data-valor') || '';
     const vendedor = cardDiv.getAttribute('data-vendedor-id') || '';
+    const customRaw = cardDiv.getAttribute('data-custom') || '{}';
+    let customData = {};
+    try {
+        customData = JSON.parse(customRaw);
+    } catch (e) {
+        customData = {};
+    }
 
     document.getElementById('modalCardId').value = cardId;
     document.getElementById('modalCardTitle').value = title;
     document.getElementById('modalCardValor').value = valor;
     document.getElementById('modalCardVendedor').value = vendedor;
     document.getElementById('editCardForm').action = "/edit_card/" + cardId;
+
+    // Pre-fill custom field inputs
+    document.querySelectorAll('#editCardModal [name^="custom_"]').forEach(input => {
+        const key = input.name.replace('custom_', '');
+        const val = customData[key];
+        if (input.type === 'checkbox') {
+            input.checked = Boolean(val);
+        } else if (input.type === 'number') {
+            if (val !== undefined && val !== null) {
+                input.value = val;
+            } else {
+                input.value = '';
+            }
+        } else {
+            input.value = val !== undefined && val !== null ? val : '';
+        }
+    });
 
     // Handler delete button
     document.getElementById('deleteCardBtn').onclick = function() {
