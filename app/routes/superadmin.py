@@ -3,6 +3,37 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 import json
 from ..models import db, Empresa, Usuario, Column
 
+
+def parse_custom_fields(raw):
+    """Validate and normalize custom field definitions."""
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+
+    if not isinstance(data, list):
+        return []
+
+    allowed = {'text', 'number', 'boolean', 'select'}
+    result = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        name = item.get('name')
+        ftype = item.get('type')
+        if not name or ftype not in allowed:
+            continue
+        entry = {'name': name, 'type': ftype}
+        if ftype == 'select':
+            opts = item.get('options')
+            if not isinstance(opts, list) or not all(isinstance(o, str) for o in opts):
+                continue
+            entry['options'] = opts
+        result.append(entry)
+        if len(result) >= 8:
+            break
+    return result
+
 superadmin_bp = Blueprint('superadmin', __name__, url_prefix='/superadmin')
 
 
@@ -57,12 +88,13 @@ def create_empresa():
         dark_mode = bool(request.form.get('dark_mode'))
         # Campos customizáveis em JSON (até 8 definições)
         raw = request.form.get('custom_fields', '[]')
-        try:
-            cf = json.loads(raw)
-        except json.JSONDecodeError:
-            cf = []
-        empresa = Empresa(nome=nome, account_id=account_id,
-                          custom_fields=cf[:8], dark_mode=dark_mode)
+        cf = parse_custom_fields(raw)
+        empresa = Empresa(
+            nome=nome,
+            account_id=account_id,
+            custom_fields=cf,
+            dark_mode=dark_mode,
+        )
         db.session.add(empresa)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
@@ -78,11 +110,7 @@ def edit_empresa(empresa_id):
         empresa.dark_mode = bool(request.form.get('dark_mode'))
         # Atualiza campos customizáveis JSON
         raw = request.form.get('custom_fields', '[]')
-        try:
-            cf = json.loads(raw)
-        except json.JSONDecodeError:
-            cf = []
-        empresa.custom_fields = cf[:8]
+        empresa.custom_fields = parse_custom_fields(raw)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
     return render_template('superadmin/edit_empresa.html', empresa=empresa)
