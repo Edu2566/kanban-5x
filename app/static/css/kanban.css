@@ -45,6 +45,11 @@ body {
 .kanban-card:hover { box-shadow: 0 4px 18px #0003; }
 .kanban-card .card-title { font-weight: 500; margin-bottom: .4rem; }
 .kanban-card .card-desc { color: #4d5a6a; font-size: .98rem; }
+.kanban-card .eye-link {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
 .modal-header { background: #f0f3fc; border-bottom: none; }
 .modal-footer { border-top: none; }
 .add-form input, .add-form button { border-radius: 8px; }
