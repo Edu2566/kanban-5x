@@ -47,6 +47,7 @@
                      data-valor="{{ card.valor_negociado }}"
                      data-vendedor-id="{{ card.vendedor_id }}"
                      data-column-id="{{ column.id }}"
+                     data-custom='{{ card.custom_data | tojson }}'
                      onclick="openEditModal(this)">
                     <div class="card-title">{{ card.title }}</div>
                     <div class="card-desc">
