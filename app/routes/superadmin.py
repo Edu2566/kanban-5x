@@ -4,34 +4,65 @@ import json
 from ..models import db, Empresa, Usuario, Column
 
 
+class CustomFieldError(ValueError):
+    """Raised when custom field definitions are invalid."""
+
+
 def parse_custom_fields(raw):
-    """Validate and normalize custom field definitions."""
+    """Validate and normalize custom field definitions.
+
+    Parameters
+    ----------
+    raw: str
+        JSON string describing the custom fields.
+
+    Returns
+    -------
+    list[dict]
+        Normalized list of custom field definitions.
+
+    Raises
+    ------
+    CustomFieldError
+        If the JSON is invalid or any field definition is incorrect.
+    """
     try:
         data = json.loads(raw)
-    except json.JSONDecodeError:
-        return []
+    except json.JSONDecodeError as exc:
+        raise CustomFieldError("Invalid JSON for custom fields") from exc
 
     if not isinstance(data, list):
-        return []
+        raise CustomFieldError("Custom fields must be a list")
 
-    allowed = {'text', 'number', 'boolean', 'select'}
+    if len(data) > 8:
+        raise CustomFieldError("At most 8 custom fields are allowed")
+
+    allowed = {"text", "number", "boolean", "select"}
     result = []
-    for item in data:
+    for idx, item in enumerate(data, start=1):
         if not isinstance(item, dict):
-            continue
-        name = item.get('name')
-        ftype = item.get('type')
-        if not name or ftype not in allowed:
-            continue
-        entry = {'name': name, 'type': ftype}
-        if ftype == 'select':
-            opts = item.get('options')
-            if not isinstance(opts, list) or not all(isinstance(o, str) for o in opts):
-                continue
-            entry['options'] = opts
+            raise CustomFieldError(f"Field #{idx} must be an object")
+        name = item.get("name")
+        ftype = item.get("type")
+        if not name or not ftype:
+            raise CustomFieldError(f"Field #{idx} must contain 'name' and 'type'")
+        if ftype not in allowed:
+            raise CustomFieldError(f"Invalid type '{ftype}' for field '{name}'")
+
+        entry = {"name": name, "type": ftype}
+        if ftype == "select":
+            opts = item.get("options")
+            if not isinstance(opts, list) or len(opts) == 0:
+                raise CustomFieldError(
+                    f"Select field '{name}' requires a non-empty 'options' list"
+                )
+            if not all(isinstance(o, str) for o in opts):
+                raise CustomFieldError(
+                    f"All options for '{name}' must be strings"
+                )
+            entry["options"] = opts
         result.append(entry)
-        if len(result) >= 8:
-            break
+
     return result
 
 superadmin_bp = Blueprint('superadmin', __name__, url_prefix='/superadmin')
@@ -88,7 +119,10 @@ def create_empresa():
         dark_mode = bool(request.form.get('dark_mode'))
         # Campos customizáveis em JSON (até 8 definições)
         raw = request.form.get('custom_fields', '[]')
-        cf = parse_custom_fields(raw)
+        try:
+            cf = parse_custom_fields(raw)
+        except CustomFieldError as e:
+            return str(e), 400
         empresa = Empresa(
             nome=nome,
             account_id=account_id,
@@ -110,7 +144,10 @@ def edit_empresa(empresa_id):
         empresa.dark_mode = bool(request.form.get('dark_mode'))
         # Atualiza campos customizáveis JSON
         raw = request.form.get('custom_fields', '[]')
-        empresa.custom_fields = parse_custom_fields(raw)
+        try:
+            empresa.custom_fields = parse_custom_fields(raw)
+        except CustomFieldError as e:
+            return str(e), 400
         db.session.commit()
         return redirect_next('superadmin.dashboard')
     return render_template('superadmin/edit_empresa.html', empresa=empresa)
