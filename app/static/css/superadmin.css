@@ -57,3 +57,10 @@ body.dark-mode {
     background: #181818;
     color: #fff;
 }
+
+.back-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
