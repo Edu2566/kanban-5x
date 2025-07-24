@@ -3,6 +3,8 @@ from ..models import db, Column, Card
 from flask import jsonify
 from .auth import login_required, superadmin_required
 
+MAX_VALOR_NEGOCIADO = 9_999_999
+
 main = Blueprint('main', __name__)
 
 
@@ -100,6 +102,8 @@ def add_card(column_id):
     # Campos fixos
     title = request.form['title']
     valor_negociado = request.form.get('valor_negociado', type=float)
+    if valor_negociado is not None and valor_negociado > MAX_VALOR_NEGOCIADO:
+        return 'Valor negociado acima do permitido', 400
     conversa = request.form.get('conversa')
     vendedor_id = request.form.get('vendedor_id', type=int)
     if g.user.role != 'gestor':
@@ -129,6 +133,8 @@ def edit_card(card_id):
         return 'Acesso negado', 403
     card.title = request.form['title']
     card.valor_negociado = request.form.get('valor_negociado', type=float)
+    if card.valor_negociado is not None and card.valor_negociado > MAX_VALOR_NEGOCIADO:
+        return 'Valor negociado acima do permitido', 400
     card.conversa = request.form.get('conversa')
     if g.user.role == 'gestor':
         novo_vendedor = request.form.get('vendedor_id', type=int)
