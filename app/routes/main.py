@@ -100,6 +100,7 @@ def add_card(column_id):
     # Campos fixos
     title = request.form['title']
     valor_negociado = request.form.get('valor_negociado', type=float)
+    conversa = request.form.get('conversa')
     vendedor_id = request.form.get('vendedor_id', type=int)
     if g.user.role != 'gestor':
         vendedor_id = g.user.id
@@ -109,6 +110,7 @@ def add_card(column_id):
     card = Card(
         title=title,
         valor_negociado=valor_negociado,
+        conversa=conversa,
         column_id=column_id,
         vendedor_id=vendedor_id,
         custom_data=custom_data,
@@ -127,6 +129,7 @@ def edit_card(card_id):
         return 'Acesso negado', 403
     card.title = request.form['title']
     card.valor_negociado = request.form.get('valor_negociado', type=float)
+    card.conversa = request.form.get('conversa')
     if g.user.role == 'gestor':
         novo_vendedor = request.form.get('vendedor_id', type=int)
         if novo_vendedor:

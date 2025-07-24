@@ -47,6 +47,7 @@ class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     valor_negociado = db.Column(db.Float)
+    conversa = db.Column(db.String)
     column_id = db.Column(db.Integer, db.ForeignKey('columns.id'), nullable=False)
     vendedor_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
     vendedor = db.relationship('Usuario', back_populates='cards_vendedor')
