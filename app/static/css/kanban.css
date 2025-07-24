@@ -2,9 +2,13 @@ body {
     background: #F4F5F7;
 }
 
+.kanban-board-wrapper {
+    overflow-x: auto;
+}
+
 .kanban-board {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 2rem;
     padding: 1rem 0;
 }
@@ -27,9 +31,9 @@ body {
     flex-wrap: wrap;
     gap: .25rem;
 }
-
-.kanban-header .column-name {
-    flex-grow: 1;
+.kanban-header .badge {
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 .kanban-cards {
     flex: 1;
