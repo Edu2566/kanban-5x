@@ -9,6 +9,20 @@ addition the following fixed fields are available:
 * **Valor negociado** – numeric value
 * **Vendedor** – user responsible for the card
 
+## Custom field types
+
+Custom fields can be of type `text`, `number`, `boolean` or `select`.  For a
+`select` field you must provide an `options` list with the allowed choices.
+
+Example configuration:
+
+```json
+[
+  {"name": "Status", "type": "select", "options": ["Novo", "Em andamento", "Fechado"]},
+  {"name": "Observacao", "type": "text"}
+]
+```
+
 Regular users only see cards where they are set as the vendor.  Users with the
 `gestor` role can access all cards for their company.
 

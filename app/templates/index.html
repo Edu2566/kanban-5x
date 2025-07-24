@@ -91,7 +91,7 @@
               {% for field in custom_fields %}
               <div class="mb-3">
                   <label class="form-label">{{ field.name }}</label>
-                  {% if field.type == 'text' %}
+              {% if field.type == 'text' %}
 {% if card is not defined %}
   {% set card = namespace(custom_data={}) %}
 {% endif %}
@@ -103,6 +103,12 @@
                     <input class="form-check-input" type="checkbox" name="custom_{{ field.name }}" id="edit_custom_{{ loop.index }}" {% if card.custom_data[field.name] %}checked{% endif %}>
                     <label class="form-check-label" for="edit_custom_{{ loop.index }}">{{ field.name }}</label>
                   </div>
+                  {% elif field.type == 'select' %}
+                  <select name="custom_{{ field.name }}" class="form-select">
+                    {% for opt in field.options %}
+                      <option value="{{ opt }}" {% if card.custom_data[field.name]==opt %}selected{% endif %}>{{ opt }}</option>
+                    {% endfor %}
+                  </select>
                   {% endif %}
               </div>
               {% endfor %}
@@ -193,6 +199,12 @@
                 <input class="form-check-input" type="checkbox" name="custom_{{ field.name }}" id="custom_{{ loop.index }}">
                 <label class="form-check-label" for="custom_{{ loop.index }}">{{ field.name }}</label>
               </div>
+              {% elif field.type == 'select' %}
+              <select name="custom_{{ field.name }}" class="form-select">
+                {% for opt in field.options %}
+                <option value="{{ opt }}">{{ opt }}</option>
+                {% endfor %}
+              </select>
               {% endif %}
             </div>
             {% endfor %}

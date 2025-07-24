@@ -10,7 +10,10 @@ class Empresa(db.Model):
 
     columns = db.relationship('Column', backref='empresa', cascade='all, delete', lazy=True)
     usuarios = db.relationship('Usuario', backref='empresa', cascade='all, delete', lazy=True)
-    # campos customizáveis para cards: lista de definições {name, type}, até 8 itens
+    # campos customizáveis para cards: lista de definições
+    # {"name", "type", "options?"} (até 8 itens)
+    # type pode ser text, number, boolean ou select. Para select
+    # é necessário fornecer uma lista "options" com as opções válidas.
     custom_fields = db.Column(db.JSON, nullable=False, default=list)
     dark_mode = db.Column(db.Boolean, nullable=False, default=False)
 

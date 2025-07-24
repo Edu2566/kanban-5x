@@ -12,13 +12,16 @@ def build_custom_data(form):
     for field in g.user.empresa.custom_fields:
         key = field.get('name')
         raw = form.get(f'custom_{key}')
-        if field.get('type') == 'number':
+        ftype = field.get('type')
+        if ftype == 'number':
             try:
                 val = float(raw)
             except (TypeError, ValueError):
                 val = None
-        elif field.get('type') == 'boolean':
+        elif ftype == 'boolean':
             val = bool(form.get(f'custom_{key}'))
+        elif ftype == 'select':
+            val = raw
         else:
             val = raw
         custom_data[key] = val
