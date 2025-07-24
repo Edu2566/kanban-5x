@@ -10,18 +10,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/superadmin.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/kanban.css') }}">
 </head>
-{% set dark = g.user.empresa.dark_mode %}
-<body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
+<body class="dark-mode">
 <div class="container py-4">
-  <div class="mb-3 text-end">
-    <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
-      <button type="submit" class="btn btn-outline-secondary py-2 px-3">
-        <i class="fa-regular fa-moon me-1"></i>Modo Escuro/Claro
-      </button>
-    </form>
-  </div>
   {% block content %}{% endblock %}
 </div>
-<script src="{{ url_for('static', filename='js/kanban.js') }}"></script>
 </body>
 </html>
