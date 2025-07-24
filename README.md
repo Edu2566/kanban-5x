@@ -6,7 +6,7 @@ Each card may store up to eight **custom fields** defined by the company.  In
 addition the following fixed fields are available:
 
 * **Título** – basic title of the card
-* **Valor negociado** – numeric value
+* **Valor negociado** – numeric value (máximo 9.999.999)
 * **Vendedor** – user responsible for the card
 
 ## Custom field types
