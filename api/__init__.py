@@ -24,3 +24,7 @@ def require_superadmin_token(view):
 def ping():
     """Simple authenticated ping endpoint."""
     return jsonify({'message': 'pong'})
+
+
+# Import additional API endpoints
+from . import cards  # noqa: E402,F401
