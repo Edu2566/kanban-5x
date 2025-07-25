@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Painel Super-Admin</h2>
 <div class="mb-3">
-  <a href="{{ url_for('superadmin.create_empresa', token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Nova Empresa</a>
+  <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createEmpresaModal">Nova Empresa</button>
 </div>
 <h3>Empresas</h3>
 <ul>
@@ -12,9 +12,10 @@
     <span>{{ emp.nome }} (Account ID: {{ emp.account_id }})</span>
     <div>
       <a href="{{ url_for('superadmin.empresa_detail', empresa_id=emp.id, token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Visualizar</a>
-      <a href="{{ url_for('superadmin.edit_empresa', empresa_id=emp.id, token=session['superadmin_token'], next=url_for('superadmin.dashboard', token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">
+      <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editEmpresaModal"
+              data-id="{{ emp.id }}" data-nome="{{ emp.nome }}" data-account="{{ emp.account_id }}" data-dark="{{ 1 if emp.dark_mode else 0 }}" data-custom='{{ emp.custom_fields|tojson }}'>
         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-      </a>
+      </button>
       <form method="post" action="{{ url_for('superadmin.delete_empresa', empresa_id=emp.id, token=session['superadmin_token']) }}" class="d-inline">
         <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
         <button type="submit" class="btn btn-outline-danger btn-sm">
@@ -25,5 +26,76 @@
   </li>
   {% endfor %}
 </ul>
+
+<!-- Modal Criar Empresa -->
+<div class="modal fade" id="createEmpresaModal" tabindex="-1" aria-labelledby="createEmpresaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="createEmpresaForm" method="post" action="{{ url_for('superadmin.create_empresa', token=session['superadmin_token']) }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createEmpresaModalLabel">Criar Empresa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nome Empresa</label>
+            <input type="text" name="nome" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Account ID</label>
+            <input type="text" name="account_id" class="form-control">
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="dark_mode" id="create_dark_mode">
+            <label class="form-check-label" for="create_dark_mode">Modo escuro</label>
+          </div>
+          <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Criar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Empresa -->
+<div class="modal fade" id="editEmpresaModal" tabindex="-1" aria-labelledby="editEmpresaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editEmpresaForm" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editEmpresaModalLabel">Editar Empresa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nome Empresa</label>
+            <input type="text" name="nome" class="form-control" id="edit_empresa_nome">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Account ID</label>
+            <input type="text" name="account_id" class="form-control" id="edit_empresa_account_id">
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" name="dark_mode" id="edit_dark_mode">
+            <label class="form-check-label" for="edit_dark_mode">Modo escuro</label>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Custom Fields (JSON)</label>
+            <textarea name="custom_fields" rows="4" class="form-control" id="edit_custom_fields"></textarea>
+            <small class="text-muted">Informe uma lista JSON de até 8 objetos { "name": "...", "type": "text|number|boolean|select", "options": ["A", "B"] } para select.</small>
+          </div>
+          <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
