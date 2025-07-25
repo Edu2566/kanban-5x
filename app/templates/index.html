@@ -53,6 +53,7 @@
                      data-title="{{ card.title }}"
                      data-valor="{{ card.valor_negociado }}"
                      data-conversa="{{ card.conversa|default('') }}"
+                     data-conversation-id="{{ card.conversation_id|default('') }}"
                      data-vendedor-id="{{ card.vendedor_id }}"
                      data-column-id="{{ column.id }}"
                      data-custom='{{ card.custom_data | tojson }}'
@@ -96,6 +97,10 @@
               <div class="mb-3">
                   <label for="modalCardConversa" class="form-label">Conversa</label>
                   <input type="url" class="form-control" id="modalCardConversa" name="conversa">
+              </div>
+              <div class="mb-3">
+                  <label for="modalCardConversationId" class="form-label">ID da Conversa</label>
+                  <input type="text" class="form-control" id="modalCardConversationId" name="conversation_id">
               </div>
               <div class="mb-3">
                   <label for="modalCardVendedor" class="form-label">Vendedor</label>
@@ -201,6 +206,10 @@
               <div class="mb-3">
                 <label for="modalAddCardConversa" class="form-label">Conversa</label>
                 <input type="url" class="form-control" id="modalAddCardConversa" name="conversa">
+              </div>
+              <div class="mb-3">
+                <label for="modalAddCardConversationId" class="form-label">ID da Conversa</label>
+                <input type="text" class="form-control" id="modalAddCardConversationId" name="conversation_id">
               </div>
               <div class="mb-3">
                 <label for="modalAddCardVendedor" class="form-label">Vendedor</label>

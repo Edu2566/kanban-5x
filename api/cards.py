@@ -31,6 +31,7 @@ def _serialize(card: Card):
         "title": card.title,
         "valor_negociado": card.valor_negociado,
         "conversa": card.conversa,
+        "conversation_id": card.conversation_id,
         "column_id": card.column_id,
         "vendedor_id": card.vendedor_id,
         "custom_data": card.custom_data,
@@ -43,10 +44,13 @@ def list_cards():
     query = Card.query
     empresa_id = request.args.get("empresa_id", type=int)
     column_id = request.args.get("column_id", type=int)
+    conversation_id = request.args.get("conversation_id")
     if empresa_id:
         query = query.join(Column).filter(Column.empresa_id == empresa_id)
     if column_id:
         query = query.filter(Card.column_id == column_id)
+    if conversation_id:
+        query = query.filter(Card.conversation_id == conversation_id)
     cards = query.all()
     return jsonify([_serialize(c) for c in cards])
 
@@ -55,6 +59,15 @@ def list_cards():
 @require_superadmin_token
 def get_card(card_id):
     card = Card.query.get_or_404(card_id)
+    return jsonify(_serialize(card))
+
+
+@api_bp.route("/cards/by_conversation/<string:conversation_id>", methods=["GET"])
+@require_superadmin_token
+def get_card_by_conversation(conversation_id):
+    card = Card.query.filter_by(conversation_id=conversation_id).first()
+    if not card:
+        abort(404)
     return jsonify(_serialize(card))
 
 
@@ -70,6 +83,7 @@ def create_card():
     if valor_negociado is not None and valor_negociado > MAX_VALOR_NEGOCIADO:
         return jsonify({"error": "valor_negociado acima do limite"}), 400
     conversa = data.get("conversa")
+    conversation_id = data.get("conversation_id")
     vendedor_id = data.get("vendedor_id")
 
     column = Column.query.get_or_404(column_id)
@@ -79,6 +93,7 @@ def create_card():
         title=title,
         valor_negociado=valor_negociado,
         conversa=conversa,
+        conversation_id=conversation_id,
         column_id=column_id,
         vendedor_id=vendedor_id,
         custom_data=custom_data,
@@ -99,6 +114,7 @@ def update_card(card_id):
     if valor_negociado is not None and valor_negociado > MAX_VALOR_NEGOCIADO:
         return jsonify({"error": "valor_negociado acima do limite"}), 400
     conversa = data.get("conversa", card.conversa)
+    conversation_id = data.get("conversation_id", card.conversation_id)
     column_id = data.get("column_id", card.column_id)
     vendedor_id = data.get("vendedor_id", card.vendedor_id)
 
@@ -108,6 +124,7 @@ def update_card(card_id):
     card.title = title
     card.valor_negociado = valor_negociado
     card.conversa = conversa
+    card.conversation_id = conversation_id
     card.column_id = column_id
     card.vendedor_id = vendedor_id
     card.custom_data = custom_data
