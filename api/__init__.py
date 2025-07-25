@@ -28,3 +28,4 @@ def ping():
 
 # Import additional API endpoints
 from . import cards  # noqa: E402,F401
+from . import columns  # noqa: E402,F401
