@@ -32,7 +32,7 @@ def test_get_by_conversation_id():
         db.session.commit()
 
         client = app.test_client()
-        headers = {'SUPERADMIN_TOKEN': 'token'}
+        headers = {'Authorization': 'Bearer token'}
 
         resp = client.get('/api/cards/by_conversation/abc', headers=headers)
         assert resp.status_code == 200

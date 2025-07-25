@@ -24,7 +24,7 @@ def test_custom_fields_crud():
     with app.app_context():
         empresa = create_empresa()
         client = app.test_client()
-        headers = {'SUPERADMIN_TOKEN': 'token'}
+        headers = {'Authorization': 'Bearer token'}
 
         # Initially empty
         resp = client.get(f'/api/custom_fields/{empresa.id}', headers=headers)
@@ -55,7 +55,7 @@ def test_custom_fields_validation():
     with app.app_context():
         empresa = create_empresa()
         client = app.test_client()
-        headers = {'SUPERADMIN_TOKEN': 'token'}
+        headers = {'Authorization': 'Bearer token'}
 
         invalid_field = {'name': 'x'}  # Missing type
         resp = client.post(f'/api/custom_fields/{empresa.id}', json=invalid_field, headers=headers)

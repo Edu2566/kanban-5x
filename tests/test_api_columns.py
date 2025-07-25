@@ -25,7 +25,7 @@ def test_columns_crud():
     with app.app_context():
         empresa = create_empresa()
         client = app.test_client()
-        headers = {'SUPERADMIN_TOKEN': 'token'}
+        headers = {'Authorization': 'Bearer token'}
 
         # Create
         resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id}, headers=headers)
