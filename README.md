@@ -26,7 +26,9 @@ Example configuration:
 ```
 
 Regular users only see cards where they are set as the vendor.  Users with the
-`gestor` role can access all cards for their company.
+`gestor` role can access all cards for their company.  Cards that have no
+vendor assigned can be edited or removed by any regular user; the first edit
+will automatically set that user as the vendor.
 
 ## Front-end JavaScript
 

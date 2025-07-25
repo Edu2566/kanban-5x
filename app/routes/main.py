@@ -131,8 +131,11 @@ def edit_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
-    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
-        return 'Acesso negado', 403
+    if g.user.role != 'gestor':
+        if card.vendedor_id not in (None, g.user.id):
+            return 'Acesso negado', 403
+        if card.vendedor_id is None:
+            card.vendedor_id = g.user.id
     card.title = request.form['title']
     card.valor_negociado = request.form.get('valor_negociado', type=float)
     if card.valor_negociado is not None and card.valor_negociado > MAX_VALOR_NEGOCIADO:
@@ -155,7 +158,7 @@ def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
-    if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
+    if g.user.role != 'gestor' and card.vendedor_id not in (None, g.user.id):
         return 'Acesso negado', 403
     db.session.delete(card)
     db.session.commit()
