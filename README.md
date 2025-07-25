@@ -7,6 +7,8 @@ addition the following fixed fields are available:
 
 * **Título** – basic title of the card
 * **Valor negociado** – numeric value (máximo 9.999.999)
+* **Conversa** – URL da conversa relacionada
+* **ID da Conversa** – identificador textual da conversa
 * **Vendedor** – user responsible for the card
 
 ## Custom field types

@@ -105,6 +105,7 @@ def add_card(column_id):
     if valor_negociado is not None and valor_negociado > MAX_VALOR_NEGOCIADO:
         return 'Valor negociado acima do permitido', 400
     conversa = request.form.get('conversa')
+    conversation_id = request.form.get('conversation_id')
     vendedor_id = request.form.get('vendedor_id', type=int)
     if g.user.role != 'gestor':
         vendedor_id = g.user.id
@@ -115,6 +116,7 @@ def add_card(column_id):
         title=title,
         valor_negociado=valor_negociado,
         conversa=conversa,
+        conversation_id=conversation_id,
         column_id=column_id,
         vendedor_id=vendedor_id,
         custom_data=custom_data,
@@ -136,6 +138,7 @@ def edit_card(card_id):
     if card.valor_negociado is not None and card.valor_negociado > MAX_VALOR_NEGOCIADO:
         return 'Valor negociado acima do permitido', 400
     card.conversa = request.form.get('conversa')
+    card.conversation_id = request.form.get('conversation_id')
     if g.user.role == 'gestor':
         novo_vendedor = request.form.get('vendedor_id', type=int)
         if novo_vendedor:
