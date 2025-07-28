@@ -32,8 +32,18 @@ class Panel(db.Model):
     name = db.Column(db.String(80), nullable=False)
     empresa_id = db.Column(db.Integer, db.ForeignKey("empresas.id"), nullable=False)
 
-    columns = db.relationship("Column", back_populates="panel", cascade="all, delete", lazy=True)
-    usuarios = db.relationship("Usuario", secondary=panel_users, backref=db.backref("panels", lazy=True))
+    columns = db.relationship(
+        "Column",
+        back_populates="panel",
+        cascade="all, delete",
+        lazy=True,
+    )
+    usuarios = db.relationship(
+        "Usuario",
+        secondary=panel_users,
+        backref=db.backref("panels", lazy=True),
+    )
+    empresa = db.relationship("Empresa", backref=db.backref("panels", lazy=True))
 
 
 class Usuario(db.Model):
