@@ -203,16 +203,18 @@ def delete_vendedor(vendedor_id):
 
 @superadmin_bp.route('/create_column', methods=['GET', 'POST'])
 def create_column():
-    empresas = Empresa.query.all()
+    """Create a new column for a specific empresa."""
+    empresa_id = request.args.get('empresa_id', type=int)
+    if not empresa_id:
+        abort(400)
     if request.method == 'POST':
         name = request.form['name']
-        empresa_id = int(request.form['empresa_id'])
         color = request.form.get('color')
         column = Column(name=name, empresa_id=empresa_id, color=color)
         db.session.add(column)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
-    return render_template('superadmin/create_column.html', empresas=empresas)
+    return render_template('superadmin/create_column.html', empresa_id=empresa_id)
 
 
 @superadmin_bp.route('/edit_column/<int:column_id>', methods=['GET', 'POST'])
