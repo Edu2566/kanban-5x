@@ -13,7 +13,18 @@
 <body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
 <div class="container py-4">
     <header class="d-flex justify-content-between align-items-center mb-4">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo">
+        <div class="d-flex align-items-center gap-3">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo">
+            {% if panels %}
+            <form method="post" action="{{ url_for('main.select_panel') }}">
+                <select name="panel_id" class="form-select" onchange="this.form.submit()">
+                    {% for panel in panels %}
+                    <option value="{{ panel.id }}" {% if panel.id == active_panel_id %}selected{% endif %}>{{ panel.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% endif %}
+        </div>
         <div class="d-flex gap-2">
         <form id="toggleThemeForm" action="{{ url_for('main.toggle_theme') }}" method="post">
             <button type="submit" class="btn btn-outline-secondary py-2 px-3">

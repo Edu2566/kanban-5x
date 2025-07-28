@@ -81,6 +81,8 @@ def index():
         columns=columns,
         custom_fields=custom_fields,
         vendedores=vendedores,
+        panels=allowed_panels,
+        active_panel_id=panel_id,
     )
 
 # Column CRUD
@@ -233,6 +235,22 @@ def api_move_card():
     card.column_id = new_column_id
     db.session.commit()
     return jsonify({'success': True})
+
+
+@main.route('/select_panel', methods=['POST'])
+@login_required
+def select_panel():
+    """Update the selected panel in the user session."""
+    panel_id = request.form.get('panel_id', type=int)
+    empresa_id = session.get('empresa_id', g.user.empresa_id)
+    if g.user.role == 'user':
+        allowed_panels = [p for p in g.user.panels if p.empresa_id == empresa_id]
+    else:
+        allowed_panels = Panel.query.filter_by(empresa_id=empresa_id).all()
+    allowed_ids = {p.id for p in allowed_panels}
+    if panel_id in allowed_ids:
+        session['panel_id'] = panel_id
+    return redirect(url_for('main.index'))
 
 
 @main.route('/toggle_theme', methods=['POST'])
