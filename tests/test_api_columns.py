@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app, db
-from app.models import Empresa
+from app.models import Empresa, Panel
 
 
 def setup_app():
@@ -20,19 +20,28 @@ def create_empresa():
     return empresa
 
 
+def create_panel(empresa):
+    panel = Panel(name='Main', empresa_id=empresa.id)
+    db.session.add(panel)
+    db.session.commit()
+    return panel
+
+
 def test_columns_crud():
     app = setup_app()
     with app.app_context():
         empresa = create_empresa()
+        panel = create_panel(empresa)
         client = app.test_client()
         headers = {'Authorization': 'Bearer token'}
 
         # Create
-        resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id, 'color': '#ff0000'}, headers=headers)
+        resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id, 'panel_id': panel.id, 'color': '#ff0000'}, headers=headers)
         assert resp.status_code == 201
         data = resp.get_json()
         assert data['name'] == 'Todo'
         assert data['color'] == '#ff0000'
+        assert data['panel_id'] == panel.id
         assert 'cards' not in data
         column_id = data['id']
 
@@ -44,16 +53,17 @@ def test_columns_crud():
         assert data['color'] == '#ff0000'
 
         # Update
-        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'empresa_id': empresa.id, 'color': '#00ff00'}, headers=headers)
+        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'empresa_id': empresa.id, 'panel_id': panel.id, 'color': '#00ff00'}, headers=headers)
         assert resp.status_code == 200
         data = resp.get_json()
         assert data['name'] == 'Doing'
         assert data['color'] == '#00ff00'
+        assert data['panel_id'] == panel.id
 
         # List
         resp = client.get('/api/columns', headers=headers)
         assert resp.status_code == 200
-        assert any(c['id'] == column_id and c['color'] == '#00ff00' for c in resp.get_json())
+        assert any(c['id'] == column_id and c['panel_id'] == panel.id for c in resp.get_json())
 
         # Delete
         resp = client.delete(f'/api/columns/{column_id}', headers=headers)

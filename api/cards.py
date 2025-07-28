@@ -1,6 +1,6 @@
 from flask import request, jsonify, abort
 
-from app.models import db, Card, Column
+from app.models import db, Card, Column, Panel, Usuario
 from app.routes.main import MAX_VALOR_NEGOCIADO
 
 from . import api_bp, require_superadmin_token
@@ -33,6 +33,7 @@ def _serialize(card: Card):
         "conversa": card.conversa,
         "conversation_id": card.conversation_id,
         "column_id": card.column_id,
+        "panel_id": card.column.panel_id if card.column else None,
         "vendedor_id": card.vendedor_id,
         "custom_data": card.custom_data,
     }
@@ -43,10 +44,15 @@ def _serialize(card: Card):
 def list_cards():
     query = Card.query
     empresa_id = request.args.get("empresa_id", type=int)
+    panel_id = request.args.get("panel_id", type=int)
     column_id = request.args.get("column_id", type=int)
     conversation_id = request.args.get("conversation_id")
+    if empresa_id or panel_id:
+        query = query.join(Column)
     if empresa_id:
-        query = query.join(Column).filter(Column.empresa_id == empresa_id)
+        query = query.filter(Column.empresa_id == empresa_id)
+    if panel_id:
+        query = query.filter(Column.panel_id == panel_id)
     if column_id:
         query = query.filter(Card.column_id == column_id)
     if conversation_id:
@@ -87,6 +93,11 @@ def create_card():
     vendedor_id = data.get("vendedor_id")
 
     column = Column.query.get_or_404(column_id)
+    panel = column.panel
+    if panel and vendedor_id is not None:
+        allowed = {u.id for u in panel.usuarios}
+        if vendedor_id not in allowed:
+            return jsonify({"error": "vendedor_id nao pertence ao painel"}), 400
     custom_data = _build_custom_data(data, column.empresa)
 
     card = Card(
@@ -119,6 +130,11 @@ def update_card(card_id):
     vendedor_id = data.get("vendedor_id", card.vendedor_id)
 
     column = Column.query.get_or_404(column_id)
+    panel = column.panel
+    if panel and vendedor_id is not None:
+        allowed = {u.id for u in panel.usuarios}
+        if vendedor_id not in allowed:
+            return jsonify({"error": "vendedor_id nao pertence ao painel"}), 400
     custom_data = _build_custom_data(data, column.empresa)
 
     card.title = title

@@ -1,6 +1,6 @@
 from flask import request, jsonify, abort
 
-from app.models import db, Column
+from app.models import db, Column, Panel
 
 from . import api_bp, require_superadmin_token
 
@@ -11,6 +11,7 @@ def _serialize(column: Column):
         "name": column.name,
         "empresa_id": column.empresa_id,
         "color": column.color,
+        "panel_id": column.panel_id,
     }
 
 
@@ -19,8 +20,11 @@ def _serialize(column: Column):
 def list_columns():
     query = Column.query
     empresa_id = request.args.get("empresa_id", type=int)
+    panel_id = request.args.get("panel_id", type=int)
     if empresa_id:
         query = query.filter(Column.empresa_id == empresa_id)
+    if panel_id is not None:
+        query = query.filter(Column.panel_id == panel_id)
     columns = query.all()
     return jsonify([_serialize(c) for c in columns])
 
@@ -38,10 +42,15 @@ def create_column():
     data = request.get_json(force=True) or {}
     name = data.get("name")
     empresa_id = data.get("empresa_id")
+    panel_id = data.get("panel_id")
     color = data.get("color")
     if not name or not empresa_id:
         return jsonify({"error": "Missing name or empresa_id"}), 400
-    column = Column(name=name, empresa_id=empresa_id, color=color)
+    if panel_id is not None:
+        panel = Panel.query.get_or_404(panel_id)
+        if panel.empresa_id != empresa_id:
+            return jsonify({"error": "panel_id nao pertence a empresa"}), 400
+    column = Column(name=name, empresa_id=empresa_id, color=color, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
     return jsonify(_serialize(column)), 201
@@ -54,9 +63,15 @@ def update_column(column_id):
     data = request.get_json(force=True) or {}
     name = data.get("name", column.name)
     empresa_id = data.get("empresa_id", column.empresa_id)
+    panel_id = data.get("panel_id", column.panel_id)
     color = data.get("color", column.color)
+    if panel_id is not None:
+        panel = Panel.query.get_or_404(panel_id)
+        if panel.empresa_id != empresa_id:
+            return jsonify({"error": "panel_id nao pertence a empresa"}), 400
     column.name = name
     column.empresa_id = empresa_id
+    column.panel_id = panel_id
     column.color = color
     db.session.commit()
     return jsonify(_serialize(column))
