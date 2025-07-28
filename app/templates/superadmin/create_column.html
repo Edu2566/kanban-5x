@@ -8,14 +8,10 @@
         <input type="text" name="name" required class="form-control">
     </div>
     <div class="mb-3">
-        <label class="form-label">Empresa</label>
-        {% set selected_emp = request.args.get('empresa_id') %}
-        <select name="empresa_id" class="form-select">
-            {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if selected_emp == emp.id %}selected{% endif %}>{{ emp.nome }}</option>
-            {% endfor %}
-        </select>
+        <label class="form-label">Cor</label>
+        <input type="color" name="color" value="#000000" class="form-control form-control-color">
     </div>
+    <input type="hidden" name="empresa_id" value="{{ request.args.get('empresa_id') }}">
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
     <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Criar</button>

@@ -37,6 +37,7 @@ class Column(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id'), nullable=False)
+    color = db.Column(db.String(7))
 
     cards = db.relationship('Card', backref='column', cascade='all, delete', lazy=True)
 

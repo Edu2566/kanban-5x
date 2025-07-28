@@ -34,7 +34,7 @@
     <span>{{ col.name }}</span>
     <div>
       <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editColumnModalSuper"
-              data-id="{{ col.id }}" data-name="{{ col.name }}" data-empresa="{{ col.empresa_id }}">
+              data-id="{{ col.id }}" data-name="{{ col.name }}" data-empresa="{{ col.empresa_id }}" data-color="{{ col.color }}">
         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
       </button>
       <form method="post" action="{{ url_for('superadmin.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
@@ -69,14 +69,7 @@
             <label class="form-label">User Name</label>
             <input type="text" name="user_name" class="form-control">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
           <div class="mb-3">
             <label class="form-label">Role</label>
             <select name="role" class="form-select">
@@ -117,14 +110,7 @@
             <label class="form-label">User Name</label>
             <input type="text" name="user_name" class="form-control">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
           <div class="mb-3">
             <label class="form-label">Role</label>
             <select name="role" class="form-select">
@@ -158,13 +144,10 @@
             <input type="text" name="name" required class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
+            <label class="form-label">Cor</label>
+            <input type="color" name="color" value="#000000" class="form-control form-control-color">
           </div>
+          <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -188,6 +171,10 @@
           <div class="mb-3">
             <label class="form-label">Nome da Coluna</label>
             <input type="text" name="name" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Cor</label>
+            <input type="color" name="color" class="form-control form-control-color">
           </div>
           <div class="mb-3">
             <label class="form-label">Empresa</label>

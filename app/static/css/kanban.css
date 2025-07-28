@@ -58,6 +58,16 @@ body {
     border: none;
     position: relative;
 }
+.kanban-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 0 16px 16px 0;
+    background: var(--column-color);
+}
 .kanban-card:hover { box-shadow: 0 4px 18px #0003; }
 .kanban-card .card-title { font-weight: 500; margin-bottom: .4rem; }
 .kanban-card .card-desc { color: #4d5a6a; font-size: .98rem; }

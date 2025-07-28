@@ -28,27 +28,32 @@ def test_columns_crud():
         headers = {'Authorization': 'Bearer token'}
 
         # Create
-        resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id}, headers=headers)
+        resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id, 'color': '#ff0000'}, headers=headers)
         assert resp.status_code == 201
         data = resp.get_json()
         assert data['name'] == 'Todo'
+        assert data['color'] == '#ff0000'
         assert 'cards' not in data
         column_id = data['id']
 
         # Get
         resp = client.get(f'/api/columns/{column_id}', headers=headers)
         assert resp.status_code == 200
-        assert resp.get_json()['id'] == column_id
+        data = resp.get_json()
+        assert data['id'] == column_id
+        assert data['color'] == '#ff0000'
 
         # Update
-        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'empresa_id': empresa.id}, headers=headers)
+        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'empresa_id': empresa.id, 'color': '#00ff00'}, headers=headers)
         assert resp.status_code == 200
-        assert resp.get_json()['name'] == 'Doing'
+        data = resp.get_json()
+        assert data['name'] == 'Doing'
+        assert data['color'] == '#00ff00'
 
         # List
         resp = client.get('/api/columns', headers=headers)
         assert resp.status_code == 200
-        assert any(c['id'] == column_id for c in resp.get_json())
+        assert any(c['id'] == column_id and c['color'] == '#00ff00' for c in resp.get_json())
 
         # Delete
         resp = client.delete(f'/api/columns/{column_id}', headers=headers)
