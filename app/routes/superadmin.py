@@ -207,7 +207,8 @@ def create_column():
     if request.method == 'POST':
         name = request.form['name']
         empresa_id = int(request.form['empresa_id'])
-        column = Column(name=name, empresa_id=empresa_id)
+        color = request.form.get('color')
+        column = Column(name=name, empresa_id=empresa_id, color=color)
         db.session.add(column)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
@@ -221,6 +222,7 @@ def edit_column(column_id):
     if request.method == 'POST':
         column.name = request.form['name']
         column.empresa_id = int(request.form['empresa_id'])
+        column.color = request.form.get('color')
         db.session.commit()
         return redirect_next('superadmin.dashboard')
     return render_template('superadmin/edit_column.html', column=column, empresas=empresas)
