@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
-from ..models import db, Column, Card
+from ..models import db, Column, Card, Panel, Usuario
 from flask import jsonify
 from .auth import login_required, superadmin_required
 
@@ -33,13 +33,36 @@ def build_custom_data(form):
 @login_required
 def index():
     empresa_id = session.get('empresa_id', g.user.empresa_id)
-    columns = Column.query.filter_by(empresa_id=empresa_id).all()
 
-    # Filter cards for regular users so they only see their own
+    # Determine allowed panels for the user
+    if g.user.role == 'user':
+        allowed_panels = [p for p in g.user.panels if p.empresa_id == empresa_id]
+    else:
+        allowed_panels = Panel.query.filter_by(empresa_id=empresa_id).all()
+
+    panel_id = request.args.get('panel_id', type=int) or session.get('panel_id')
+
+    if allowed_panels:
+        allowed_ids = {p.id for p in allowed_panels}
+        if panel_id not in allowed_ids:
+            panel_id = allowed_panels[0].id
+        session['panel_id'] = panel_id
+        columns = Column.query.filter_by(
+            empresa_id=empresa_id, panel_id=panel_id
+        ).all()
+        panel_user_ids = {u.id for u in Panel.query.get(panel_id).usuarios}
+    else:
+        session.pop('panel_id', None)
+        columns = []
+        panel_user_ids = set()
+
+    # Filter cards
     for column in columns:
         if g.user.role == 'user':
             column.filtered_cards = [
-                card for card in column.cards if card.vendedor_id == g.user.id
+                c
+                for c in column.cards
+                if c.vendedor_id is None or c.vendedor_id in panel_user_ids
             ]
         else:
             column.filtered_cards = list(column.cards)
@@ -99,6 +122,7 @@ def add_card(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    panel = column.panel
     # Campos fixos
     title = request.form['title']
     valor_negociado = request.form.get('valor_negociado', type=float)
@@ -106,10 +130,11 @@ def add_card(column_id):
         return 'Valor negociado acima do permitido', 400
     conversa = request.form.get('conversa')
     conversation_id = request.form.get('conversation_id')
-    vendedor_id = request.form.get('vendedor_id', type=int)
-    if g.user.role != 'gestor':
-        vendedor_id = g.user.id
+    raw_vendedor = request.form.get('vendedor_id', type=int)
+    vendedor_id = raw_vendedor if g.user.role == 'gestor' else g.user.id
     vendedor_id = vendedor_id or g.user.id
+    if panel and vendedor_id and vendedor_id not in [u.id for u in panel.usuarios]:
+        return 'Vendedor não pertence ao painel', 400
     # Monta dados customizados conforme definições em Empresa.custom_fields
     custom_data = build_custom_data(request.form)
     card = Card(
@@ -145,6 +170,9 @@ def edit_card(card_id):
     if g.user.role == 'gestor':
         novo_vendedor = request.form.get('vendedor_id', type=int)
         if novo_vendedor:
+            panel = card.column.panel
+            if panel and novo_vendedor not in [u.id for u in panel.usuarios]:
+                return 'Vendedor não pertence ao painel', 400
             card.vendedor_id = novo_vendedor
     # Atualiza custom_data com os campos definidos
     custom_data = build_custom_data(request.form)
@@ -176,6 +204,10 @@ def move_card(card_id):
     column = Column.query.get_or_404(new_column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    if card.vendedor_id:
+        panel = column.panel
+        if panel and card.vendedor_id not in [u.id for u in panel.usuarios]:
+            return 'Vendedor não pertence ao painel', 400
     card.column_id = new_column_id
     db.session.commit()
     return redirect(url_for('main.index'))
@@ -194,6 +226,10 @@ def api_move_card():
     column = Column.query.get_or_404(new_column_id)
     if column.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
+    if card.vendedor_id:
+        panel = column.panel
+        if panel and card.vendedor_id not in [u.id for u in panel.usuarios]:
+            return jsonify({'success': False}), 400
     card.column_id = new_column_id
     db.session.commit()
     return jsonify({'success': True})
