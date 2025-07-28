@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         createColumnModal.addEventListener('show.bs.modal', event => {
             const button = event.relatedTarget;
             const empresaId = button.getAttribute('data-empresa');
-            fillSelectOptions(createColumnModal.querySelector('select[name="empresa_id"]'), null, empresaId);
+            const idInput = createColumnModal.querySelector('input[name="empresa_id"]');
+            if (idInput) idInput.value = empresaId;
             const colorInput = createColumnModal.querySelector('input[name="color"]');
             if (colorInput) colorInput.value = '#000000';
         });

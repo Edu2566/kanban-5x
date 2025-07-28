@@ -147,7 +147,7 @@
 <div class="modal fade" id="createColumnModal" tabindex="-1" aria-labelledby="createColumnModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" action="{{ url_for('superadmin.create_column', token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
+      <form method="post" action="{{ url_for('superadmin.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
         <div class="modal-header">
           <h5 class="modal-title" id="createColumnModalLabel">Criar Coluna</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -161,14 +161,7 @@
             <label class="form-label">Cor</label>
             <input type="color" name="color" value="#000000" class="form-control form-control-color">
           </div>
-          <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
-          </div>
+          <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
