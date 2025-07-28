@@ -31,3 +31,4 @@ def ping():
 from . import cards  # noqa: E402,F401
 from . import columns  # noqa: E402,F401
 from . import custom_fields  # noqa: E402,F401
+from . import panels  # noqa: E402,F401
