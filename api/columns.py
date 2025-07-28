@@ -10,6 +10,7 @@ def _serialize(column: Column):
         "id": column.id,
         "name": column.name,
         "empresa_id": column.empresa_id,
+        "color": column.color,
     }
 
 
@@ -37,9 +38,10 @@ def create_column():
     data = request.get_json(force=True) or {}
     name = data.get("name")
     empresa_id = data.get("empresa_id")
+    color = data.get("color")
     if not name or not empresa_id:
         return jsonify({"error": "Missing name or empresa_id"}), 400
-    column = Column(name=name, empresa_id=empresa_id)
+    column = Column(name=name, empresa_id=empresa_id, color=color)
     db.session.add(column)
     db.session.commit()
     return jsonify(_serialize(column)), 201
@@ -52,8 +54,10 @@ def update_column(column_id):
     data = request.get_json(force=True) or {}
     name = data.get("name", column.name)
     empresa_id = data.get("empresa_id", column.empresa_id)
+    color = data.get("color", column.color)
     column.name = name
     column.empresa_id = empresa_id
+    column.color = color
     db.session.commit()
     return jsonify(_serialize(column))
 

@@ -8,6 +8,10 @@
         <input type="text" name="name" required class="form-control">
     </div>
     <div class="mb-3">
+        <label class="form-label">Cor</label>
+        <input type="color" name="color" value="#000000" class="form-control form-control-color">
+    </div>
+    <div class="mb-3">
         <label class="form-label">Empresa</label>
         {% set selected_emp = request.args.get('empresa_id') %}
         <select name="empresa_id" class="form-select">
