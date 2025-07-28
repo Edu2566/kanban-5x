@@ -1,6 +1,13 @@
 from . import db
 
 
+panel_users = db.Table(
+    "panel_users",
+    db.Column("panel_id", db.Integer, db.ForeignKey("panels.id"), primary_key=True),
+    db.Column("usuario_id", db.Integer, db.ForeignKey("usuarios.id"), primary_key=True),
+)
+
+
 class Empresa(db.Model):
     __tablename__ = 'empresas'
 
@@ -16,6 +23,17 @@ class Empresa(db.Model):
     # é necessário fornecer uma lista "options" com as opções válidas.
     custom_fields = db.Column(db.JSON, nullable=False, default=list)
     dark_mode = db.Column(db.Boolean, nullable=False, default=False)
+
+
+class Panel(db.Model):
+    __tablename__ = "panels"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    empresa_id = db.Column(db.Integer, db.ForeignKey("empresas.id"), nullable=False)
+
+    columns = db.relationship("Column", back_populates="panel", cascade="all, delete", lazy=True)
+    usuarios = db.relationship("Usuario", secondary=panel_users, backref=db.backref("panels", lazy=True))
 
 
 class Usuario(db.Model):
@@ -37,8 +55,10 @@ class Column(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id'), nullable=False)
+    panel_id = db.Column(db.Integer, db.ForeignKey('panels.id'))
     color = db.Column(db.String(7))
 
+    panel = db.relationship('Panel', back_populates='columns')
     cards = db.relationship('Card', backref='column', cascade='all, delete', lazy=True)
 
 

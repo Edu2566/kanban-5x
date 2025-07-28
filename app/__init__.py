@@ -30,7 +30,7 @@ def create_app():
     migrate.init_app(app, db)
 
     # Import models so that create_all can see them
-    from .models import Empresa, Usuario, Column, Card  # noqa: F401
+    from .models import Empresa, Usuario, Column, Card, Panel  # noqa: F401
 
     # Create database tables if they don't exist yet
     with app.app_context():
