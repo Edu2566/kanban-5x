@@ -1,0 +1,30 @@
+{% extends 'superadmin/layout.html' %}
+{% block title %}Criar Painel{% endblock %}
+{% block content %}
+<h2>Criar Painel</h2>
+<form method="post" class="mb-4">
+    <div class="mb-3">
+        <label class="form-label">Nome do Painel</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Empresa</label>
+        <select name="empresa_id" class="form-select">
+            {% for emp in empresas %}
+                <option value="{{ emp.id }}" {% if emp.id == empresa_id %}selected{% endif %}>{{ emp.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Usuários</label>
+        <select name="usuario_ids" multiple class="form-select">
+            {% for usr in usuarios %}
+                <option value="{{ usr.id }}">{{ usr.user_name }} - {{ usr.user_email }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <input type="hidden" name="token" value="{{ request.args.get('token') }}">
+    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+    <button type="submit" class="btn btn-primary">Criar</button>
+</form>
+{% endblock %}

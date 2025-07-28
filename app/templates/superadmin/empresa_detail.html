@@ -6,6 +6,7 @@
 <div class="mb-3">
   <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createVendedorModal" data-empresa="{{ empresa.id }}">Novo Vendedor/Gestor</button>
   <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createColumnModal" data-empresa="{{ empresa.id }}">Nova Coluna</button>
+  <a href="{{ url_for('panels.create_panel', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-secondary btn-sm">Novo Painel</a>
 </div>
 <h3>Vendedores</h3>
 <ul>
@@ -18,6 +19,25 @@
         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
       </button>
       <form method="post" action="{{ url_for('superadmin.delete_vendedor', vendedor_id=usr.id, token=session['superadmin_token']) }}" class="d-inline">
+        <input type="hidden" name="next" value="{{ url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token']) }}">
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+          <i class="fa-solid fa-trash me-1"></i>Deletar
+        </button>
+      </form>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+<h3>Painéis</h3>
+<ul>
+  {% for panel in panels %}
+  <li class="d-flex justify-content-between align-items-center">
+    <span>{{ panel.name }}</span>
+    <div>
+      <a href="{{ url_for('panels.edit_panel', panel_id=panel.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-primary btn-sm">
+        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
+      </a>
+      <form method="post" action="{{ url_for('panels.delete_panel', panel_id=panel.id, token=session['superadmin_token']) }}" class="d-inline">
         <input type="hidden" name="next" value="{{ url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token']) }}">
         <button type="submit" class="btn btn-outline-danger btn-sm">
           <i class="fa-solid fa-trash me-1"></i>Deletar

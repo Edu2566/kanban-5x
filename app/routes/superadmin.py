@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g
 import json
-from ..models import db, Empresa, Usuario, Column
+from ..models import db, Empresa, Usuario, Column, Panel
 
 
 class CustomFieldError(ValueError):
@@ -95,7 +95,8 @@ def redirect_next(default_endpoint):
 @superadmin_bp.route('/')
 def dashboard():
     empresas = Empresa.query.all()
-    return render_template('superadmin/dashboard.html', empresas=empresas)
+    panels = Panel.query.all()
+    return render_template('superadmin/dashboard.html', empresas=empresas, panels=panels)
 
 
 @superadmin_bp.route('/empresa/<int:empresa_id>')
@@ -103,11 +104,13 @@ def empresa_detail(empresa_id):
     empresa = Empresa.query.get_or_404(empresa_id)
     vendedores = Usuario.query.filter_by(empresa_id=empresa_id).all()
     columns = Column.query.filter_by(empresa_id=empresa_id).all()
+    panels = Panel.query.filter_by(empresa_id=empresa_id).all()
     return render_template(
         'superadmin/empresa_detail.html',
         empresa=empresa,
         vendedores=vendedores,
         columns=columns,
+        panels=panels,
     )
 
 

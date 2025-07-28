@@ -40,11 +40,13 @@ def create_app():
     from .routes.webhook import webhook_bp
     from .routes.auth import auth_bp
     from .routes.superadmin import superadmin_bp
+    from .routes.panels import panels_bp
     from api import api_bp
     app.register_blueprint(main)
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(superadmin_bp)
+    app.register_blueprint(panels_bp)
     app.register_blueprint(api_bp)
 
     return app
