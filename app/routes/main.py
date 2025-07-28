@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
 from ..models import db, Column, Card, Panel, Usuario
 from flask import jsonify
-from .auth import login_required, superadmin_required
+from .auth import login_required, superadmin_required, has_panel_access
 
 MAX_VALOR_NEGOCIADO = 9_999_999
 
@@ -88,32 +88,41 @@ def index():
 # Column CRUD
 @main.route('/add_column', methods=['POST'])
 @login_required
-@superadmin_required
 def add_column():
     name = request.form['name']
-    column = Column(name=name, empresa_id=g.user.empresa_id)
+    panel_id = request.form.get('panel_id', type=int) or session.get('panel_id')
+    panel = Panel.query.get(panel_id) if panel_id else None
+    if panel:
+        if not has_panel_access(panel):
+            return 'Acesso negado', 403
+        empresa_id = panel.empresa_id
+    else:
+        empresa_id = g.user.empresa_id
+    column = Column(name=name, empresa_id=empresa_id, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
     return redirect(url_for('main.index'))
 
 @main.route('/edit_column/<int:column_id>', methods=['POST'])
 @login_required
-@superadmin_required
 def edit_column(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    if column.panel and not has_panel_access(column.panel):
+        return 'Acesso negado', 403
     column.name = request.form['name']
     db.session.commit()
     return redirect(url_for('main.index'))
 
 @main.route('/delete_column/<int:column_id>', methods=['POST'])
 @login_required
-@superadmin_required
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    if column.panel and not has_panel_access(column.panel):
+        return 'Acesso negado', 403
     db.session.delete(column)
     db.session.commit()
     return '', 204
@@ -125,6 +134,8 @@ def add_card(column_id):
     if column.empresa_id != g.user.empresa_id:
         abort(404)
     panel = column.panel
+    if panel and not has_panel_access(panel):
+        return 'Acesso negado', 403
     # Campos fixos
     title = request.form['title']
     valor_negociado = request.form.get('valor_negociado', type=float)
@@ -158,6 +169,8 @@ def edit_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
+    if card.column.panel and not has_panel_access(card.column.panel):
+        return 'Acesso negado', 403
     if g.user.role != 'gestor':
         if card.vendedor_id not in (None, g.user.id):
             return 'Acesso negado', 403
@@ -188,6 +201,8 @@ def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
+    if card.column.panel and not has_panel_access(card.column.panel):
+        return 'Acesso negado', 403
     if g.user.role != 'gestor' and card.vendedor_id not in (None, g.user.id):
         return 'Acesso negado', 403
     db.session.delete(card)
@@ -200,12 +215,17 @@ def move_card(card_id):
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         abort(404)
+    panel = card.column.panel
+    if panel and not has_panel_access(panel):
+        return 'Acesso negado', 403
     if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return 'Acesso negado', 403
     new_column_id = int(request.form['new_column_id'])
     column = Column.query.get_or_404(new_column_id)
     if column.empresa_id != g.user.empresa_id:
         abort(404)
+    if column.panel and not has_panel_access(column.panel):
+        return 'Acesso negado', 403
     if card.vendedor_id:
         panel = column.panel
         if panel and card.vendedor_id not in [u.id for u in panel.usuarios]:
@@ -223,11 +243,15 @@ def api_move_card():
     card = Card.query.get_or_404(card_id)
     if card.column.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
+    if card.column.panel and not has_panel_access(card.column.panel):
+        return jsonify({'success': False}), 403
     if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return jsonify({'success': False}), 403
     column = Column.query.get_or_404(new_column_id)
     if column.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
+    if column.panel and not has_panel_access(column.panel):
+        return jsonify({'success': False}), 403
     if card.vendedor_id:
         panel = column.panel
         if panel and card.vendedor_id not in [u.id for u in panel.usuarios]:

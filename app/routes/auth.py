@@ -76,3 +76,27 @@ def gestor_required(view):
 
     return role_required('gestor')(view)
 
+
+def is_panel_member(panel) -> bool:
+    """Return ``True`` if ``g.user`` is member of the given panel."""
+
+    if panel is None:
+        return False
+    return any(u.id == g.user.id for u in panel.usuarios)
+
+
+def has_panel_access(panel) -> bool:
+    """Check whether ``g.user`` may access ``panel``."""
+
+    if g.get('user') is None:
+        return False
+    if g.user.role == 'superadmin':
+        return True
+    if panel is None:
+        return False
+    if panel.empresa_id != g.user.empresa_id:
+        return False
+    if g.user.role == 'gestor':
+        return True
+    return is_panel_member(panel)
+
