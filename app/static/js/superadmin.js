@@ -66,9 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
             const empresaId = button.getAttribute('data-empresa');
+            const color = button.getAttribute('data-color') || '#000000';
             const form = editColumnModal.querySelector('form');
             form.action = `/superadmin/edit_column/${id}`;
             form.querySelector('input[name="name"]').value = name;
+            const colorInput = form.querySelector('input[name="color"]');
+            if (colorInput) colorInput.value = color;
             fillSelectOptions(form.querySelector('select[name="empresa_id"]'), null, empresaId);
         });
     }
@@ -79,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = event.relatedTarget;
             const empresaId = button.getAttribute('data-empresa');
             fillSelectOptions(createColumnModal.querySelector('select[name="empresa_id"]'), null, empresaId);
+            const colorInput = createColumnModal.querySelector('input[name="color"]');
+            if (colorInput) colorInput.value = '#000000';
         });
     }
 });
