@@ -27,28 +27,7 @@
   {% endfor %}
 </ul>
 
-<h3 class="mt-4">Painéis</h3>
-<div class="mb-3">
-  <a href="{{ url_for('panels.create_panel', token=session['superadmin_token']) }}" class="btn btn-outline-secondary btn-sm">Novo Painel</a>
-</div>
-<ul>
-  {% for panel in panels %}
-  <li class="d-flex justify-content-between align-items-center">
-    <span>{{ panel.name }} - {{ panel.empresa.nome }}</span>
-    <div>
-      <a href="{{ url_for('panels.edit_panel', panel_id=panel.id, token=session['superadmin_token']) }}" class="btn btn-outline-primary btn-sm">
-        <i class="fa-regular fa-pen-to-square me-1"></i>Editar
-      </a>
-      <form method="post" action="{{ url_for('panels.delete_panel', panel_id=panel.id, token=session['superadmin_token']) }}" class="d-inline">
-        <input type="hidden" name="next" value="{{ url_for('superadmin.dashboard', token=session['superadmin_token']) }}">
-        <button type="submit" class="btn btn-outline-danger btn-sm">
-          <i class="fa-solid fa-trash me-1"></i>Deletar
-        </button>
-      </form>
-    </div>
-  </li>
-  {% endfor %}
-</ul>
+
 
 <!-- Modal Criar Empresa -->
 <div class="modal fade" id="createEmpresaModal" tabindex="-1" aria-labelledby="createEmpresaModalLabel" aria-hidden="true">
