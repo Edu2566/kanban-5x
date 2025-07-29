@@ -62,3 +62,7 @@ body.dark-mode {
     height: 40px;
     object-fit: contain;
 }
+
+.card-date {
+    font-size: 0.8rem;
+}
