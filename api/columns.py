@@ -41,15 +41,16 @@ def get_column(column_id):
 def create_column():
     data = request.get_json(force=True) or {}
     name = data.get("name")
-    empresa_id = data.get("empresa_id")
     panel_id = data.get("panel_id")
+    empresa_id = data.get("empresa_id")
     color = data.get("color")
-    if not name or not empresa_id:
-        return jsonify({"error": "Missing name or empresa_id"}), 400
-    if panel_id is not None:
-        panel = Panel.query.get_or_404(panel_id)
-        if panel.empresa_id != empresa_id:
-            return jsonify({"error": "panel_id nao pertence a empresa"}), 400
+    if not name or panel_id is None:
+        return jsonify({"error": "Missing name or panel_id"}), 400
+    panel = Panel.query.get_or_404(panel_id)
+    if empresa_id is None:
+        empresa_id = panel.empresa_id
+    elif panel.empresa_id != empresa_id:
+        return jsonify({"error": "panel_id nao pertence a empresa"}), 400
     column = Column(name=name, empresa_id=empresa_id, color=color, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
@@ -62,13 +63,16 @@ def update_column(column_id):
     column = Column.query.get_or_404(column_id)
     data = request.get_json(force=True) or {}
     name = data.get("name", column.name)
-    empresa_id = data.get("empresa_id", column.empresa_id)
     panel_id = data.get("panel_id", column.panel_id)
+    empresa_id = data.get("empresa_id")
     color = data.get("color", column.color)
-    if panel_id is not None:
-        panel = Panel.query.get_or_404(panel_id)
-        if panel.empresa_id != empresa_id:
-            return jsonify({"error": "panel_id nao pertence a empresa"}), 400
+    if panel_id is None:
+        return jsonify({"error": "Missing panel_id"}), 400
+    panel = Panel.query.get_or_404(panel_id)
+    if empresa_id is None:
+        empresa_id = panel.empresa_id
+    elif panel.empresa_id != empresa_id:
+        return jsonify({"error": "panel_id nao pertence a empresa"}), 400
     column.name = name
     column.empresa_id = empresa_id
     column.panel_id = panel_id

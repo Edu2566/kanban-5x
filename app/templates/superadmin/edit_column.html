@@ -12,10 +12,10 @@
         <input type="color" name="color" value="{{ column.color or '#000000' }}" class="form-control form-control-color">
     </div>
     <div class="mb-3">
-        <label class="form-label">Empresa</label>
-        <select name="empresa_id" class="form-select">
-            {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == column.empresa_id %}selected{% endif %}>{{ emp.nome }}</option>
+        <label class="form-label">Painel</label>
+        <select name="panel_id" class="form-select">
+            {% for p in panels %}
+                <option value="{{ p.id }}" {% if p.id == column.panel_id %}selected{% endif %}>{{ p.name }} - {{ p.empresa.nome }}</option>
             {% endfor %}
         </select>
     </div>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g
 
-from ..models import db, Panel, Empresa, Usuario
+from ..models import db, Panel, Empresa, Usuario, Column
 from .superadmin import _require_token, redirect_next
 
 panels_bp = Blueprint('panels', __name__, url_prefix='/superadmin')
@@ -62,3 +62,75 @@ def delete_panel(panel_id):
     db.session.delete(panel)
     db.session.commit()
     return redirect_next('superadmin.dashboard')
+
+
+# Column management -------------------------------------------------------
+
+@panels_bp.route('/create_column/<int:panel_id>', methods=['GET', 'POST'])
+def create_column(panel_id):
+    panel = Panel.query.get_or_404(panel_id)
+    if request.method == 'POST':
+        name = request.form['name']
+        color = request.form.get('color')
+        column = Column(
+            name=name,
+            color=color,
+            panel_id=panel.id,
+            empresa_id=panel.empresa_id,
+        )
+        db.session.add(column)
+        db.session.commit()
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(
+            url_for(
+                'panels.edit_panel',
+                panel_id=panel.id,
+                token=session.get('superadmin_token'),
+            )
+        )
+    return render_template('superadmin/create_column.html', panel=panel)
+
+
+@panels_bp.route('/edit_column/<int:column_id>', methods=['GET', 'POST'])
+def edit_column(column_id):
+    column = Column.query.get_or_404(column_id)
+    panels = Panel.query.all()
+    if request.method == 'POST':
+        column.name = request.form['name']
+        column.color = request.form.get('color')
+        panel_id = int(request.form['panel_id'])
+        panel = Panel.query.get_or_404(panel_id)
+        column.panel_id = panel_id
+        column.empresa_id = panel.empresa_id
+        db.session.commit()
+        next_url = request.form.get('next') or request.args.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect(
+            url_for(
+                'panels.edit_panel',
+                panel_id=panel_id,
+                token=session.get('superadmin_token'),
+            )
+        )
+    return render_template('superadmin/edit_column.html', column=column, panels=panels)
+
+
+@panels_bp.route('/delete_column/<int:column_id>', methods=['POST'])
+def delete_column(column_id):
+    column = Column.query.get_or_404(column_id)
+    panel_id = column.panel_id
+    db.session.delete(column)
+    db.session.commit()
+    next_url = request.form.get('next') or request.args.get('next')
+    if next_url:
+        return redirect(next_url)
+    return redirect(
+        url_for(
+            'panels.edit_panel',
+            panel_id=panel_id,
+            token=session.get('superadmin_token'),
+        )
+    )
