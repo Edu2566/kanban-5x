@@ -108,6 +108,48 @@ function updateColumnStats(columnEl) {
     }
 }
 
+function filterCards() {
+    const minInput = document.getElementById('filterValorMin');
+    const maxInput = document.getElementById('filterValorMax');
+    const vendedorSelect = document.getElementById('filterVendedor');
+    const tituloInput = document.getElementById('filterTitulo');
+    const dataIniInput = document.getElementById('filterDataIni');
+    const dataFimInput = document.getElementById('filterDataFim');
+
+    const min = minInput && minInput.value ? parseFloat(minInput.value) : null;
+    const max = maxInput && maxInput.value ? parseFloat(maxInput.value) : null;
+    const selectedVendedores = vendedorSelect
+        ? Array.from(vendedorSelect.selectedOptions).map(o => o.value)
+        : [];
+    const titulo = tituloInput && tituloInput.value
+        ? tituloInput.value.toLowerCase()
+        : '';
+    const dataIni = dataIniInput && dataIniInput.value
+        ? new Date(dataIniInput.value)
+        : null;
+    const dataFim = dataFimInput && dataFimInput.value
+        ? new Date(dataFimInput.value + 'T23:59:59')
+        : null;
+
+    document.querySelectorAll('.kanban-card').forEach(card => {
+        const valor = parseFloat(card.dataset.valor) || 0;
+        const vendedorId = card.dataset.vendedorId || '';
+        const title = (card.dataset.title || '').toLowerCase();
+        const createdAtStr = card.dataset.createdAt || '';
+        const createdAt = createdAtStr ? new Date(createdAtStr) : null;
+
+        let show = true;
+        if (min !== null && valor < min) show = false;
+        if (show && max !== null && valor > max) show = false;
+        if (show && selectedVendedores.length && !selectedVendedores.includes(vendedorId)) show = false;
+        if (show && titulo && !title.includes(titulo)) show = false;
+        if (show && dataIni && (!createdAt || createdAt < dataIni)) show = false;
+        if (show && dataFim && (!createdAt || createdAt > dataFim)) show = false;
+
+        card.style.display = show ? '' : 'none';
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggleForm = document.getElementById('toggleThemeForm');
     if (toggleForm) {
@@ -146,6 +188,17 @@ document.addEventListener('DOMContentLoaded', () => {
             addColumnForm.querySelector('input[name="panel_id"]').value = panelSelect.value;
         });
     }
+
+    // Filtros
+    ['filterValorMin', 'filterValorMax', 'filterVendedor', 'filterTitulo', 'filterDataIni', 'filterDataFim']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const evt = el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input';
+                el.addEventListener(evt, filterCards);
+            }
+        });
+    filterCards();
 
     const boardWrapper = document.querySelector('.kanban-board-wrapper');
     const topScroll = document.getElementById('kanbanTopScroll');
@@ -206,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.dataset.conversationId = card.conversation_id || '';
         div.dataset.vendedorId = card.vendedor_id || '';
         div.dataset.columnId = card.column_id;
+        div.dataset.createdAt = card.created_at || '';
         div.dataset.custom = JSON.stringify(card.custom_data || {});
         div.onclick = () => openEditModal(div);
         const titleDiv = document.createElement('div');
@@ -233,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardEl = createCardEl(card);
         columnDiv.appendChild(cardEl);
         updateColumnStats(columnDiv.closest('.kanban-column'));
+        filterCards();
     }
 
     function updateCard(card) {
@@ -248,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         existing.dataset.conversationId = card.conversation_id || '';
         existing.dataset.vendedorId = card.vendedor_id || '';
         existing.dataset.columnId = card.column_id;
+        existing.dataset.createdAt = card.created_at || '';
         existing.dataset.custom = JSON.stringify(card.custom_data || {});
         existing.querySelector('.card-title').textContent = card.title;
         existing.querySelector('.card-desc').textContent = `${formatBRL(card.valor_negociado)} - ${card.vendedor_name || ''}`;
@@ -265,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateColumnStats(document.querySelector(`.kanban-column[data-column-id='${oldColumn}']`));
         }
         updateColumnStats(document.querySelector(`.kanban-column[data-column-id='${card.column_id}']`));
+        filterCards();
     }
 
     function removeCard(cardId) {
