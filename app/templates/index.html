@@ -45,6 +45,35 @@
         {% endif %}
         </div>
     </header>
+    <form id="filtersForm" class="row row-cols-lg-auto g-2 align-items-center mb-3">
+        <div class="col-auto">
+            <div class="input-group">
+                <span class="input-group-text">Valor</span>
+                <input type="number" class="form-control" id="filterValorMin" placeholder="Min">
+                <input type="number" class="form-control" id="filterValorMax" placeholder="Max">
+            </div>
+        </div>
+        <div class="col-auto">
+            <select id="filterVendedor" class="form-select" multiple>
+                {% for vendedor in vendedores %}
+                <option value="{{ vendedor.id }}">{{ vendedor.user_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <span class="input-group-text">Título</span>
+                <input type="text" class="form-control" id="filterTitulo" placeholder="Buscar">
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <span class="input-group-text">Data</span>
+                <input type="date" class="form-control" id="filterDataIni">
+                <input type="date" class="form-control" id="filterDataFim">
+            </div>
+        </div>
+    </form>
     <div id="kanbanTopScroll" class="kanban-top-scroll"><div></div></div>
     <div class="kanban-board-wrapper">
     <div class="kanban-board row flex-nowrap g-3">
