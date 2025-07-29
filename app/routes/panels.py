@@ -16,7 +16,6 @@ def check_superadmin_token():
 @panels_bp.route('/create_panel', methods=['GET', 'POST'])
 def create_panel():
     empresas = Empresa.query.all()
-    usuarios = Usuario.query.filter(Usuario.role != 'superadmin').all()
     if request.method == 'POST':
         name = request.form['name']
         empresa_id = int(request.form['empresa_id'])
@@ -27,7 +26,18 @@ def create_panel():
         db.session.add(panel)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
+
     empresa_id = request.args.get('empresa_id', type=int)
+    if not empresa_id and empresas:
+        empresa_id = empresas[0].id
+
+    usuarios = []
+    if empresa_id:
+        usuarios = (
+            Usuario.query.filter(
+                Usuario.role != 'superadmin', Usuario.empresa_id == empresa_id
+            ).all()
+        )
     return render_template(
         'superadmin/create_panel.html',
         empresas=empresas,
@@ -40,7 +50,6 @@ def create_panel():
 def edit_panel(panel_id):
     panel = Panel.query.get_or_404(panel_id)
     empresas = Empresa.query.all()
-    usuarios = Usuario.query.filter(Usuario.role != 'superadmin').all()
     if request.method == 'POST':
         panel.name = request.form['name']
         panel.empresa_id = int(request.form['empresa_id'])
@@ -48,6 +57,12 @@ def edit_panel(panel_id):
         panel.usuarios = Usuario.query.filter(Usuario.id.in_(user_ids)).all()
         db.session.commit()
         return redirect_next('superadmin.dashboard')
+
+    usuarios = (
+        Usuario.query.filter(
+            Usuario.role != 'superadmin', Usuario.empresa_id == panel.empresa_id
+        ).all()
+    )
     return render_template(
         'superadmin/edit_panel.html',
         panel=panel,
