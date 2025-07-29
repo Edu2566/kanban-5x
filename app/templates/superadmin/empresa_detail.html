@@ -151,7 +151,7 @@
 <div class="modal fade" id="createColumnModal" tabindex="-1" aria-labelledby="createColumnModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-        <form method="post" action="{{ url_for('superadmin.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
+        <form method="post" action="{{ url_for('panels.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
         <div class="modal-header">
           <h5 class="modal-title" id="createColumnModalLabel">Criar Coluna</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
