@@ -32,10 +32,22 @@ def build_custom_data(form):
 @main.route('/', methods=['GET'])
 @login_required
 def index():
-    empresa_id = session.get('empresa_id', g.user.empresa_id)
+    """Render the board for the current or selected company."""
+    # ``empresa_id`` may be provided by query parameter to allow super-admins
+    # to switch between companies.  When present it is persisted in the
+    # session so that subsequent requests keep the selection.
+    req_empresa_id = request.args.get("empresa_id", type=int)
+    if g.user.role == "superadmin":
+        if req_empresa_id:
+            session["empresa_id"] = req_empresa_id
+        empresa_id = session.get("empresa_id")
+    else:
+        empresa_id = req_empresa_id or session.get("empresa_id", g.user.empresa_id)
 
     # Determine allowed panels for the user
-    if g.user.role == 'user':
+    if g.user.role == "superadmin" and empresa_id is None:
+        allowed_panels = Panel.query.all()
+    elif g.user.role == 'user':
         allowed_panels = [p for p in g.user.panels if p.empresa_id == empresa_id]
     else:
         allowed_panels = Panel.query.filter_by(empresa_id=empresa_id).all()
@@ -47,11 +59,14 @@ def index():
         if panel_id not in allowed_ids:
             panel_id = allowed_panels[0].id
         session['panel_id'] = panel_id
-        columns = (
-            Column.query.join(Panel)
-            .filter(Panel.empresa_id == empresa_id, Column.panel_id == panel_id)
-            .all()
-        )
+        if g.user.role == "superadmin" and empresa_id is None:
+            columns = Column.query.filter_by(panel_id=panel_id).all()
+        else:
+            columns = (
+                Column.query.join(Panel)
+                .filter(Panel.empresa_id == empresa_id, Column.panel_id == panel_id)
+                .all()
+            )
         panel_user_ids = {u.id for u in Panel.query.get(panel_id).usuarios}
     else:
         session.pop('panel_id', None)
@@ -271,6 +286,13 @@ def api_move_card():
 def select_panel():
     """Update the selected panel in the user session."""
     panel_id = request.form.get('panel_id', type=int)
+    if g.user.role == "superadmin":
+        panel = Panel.query.get(panel_id)
+        if panel:
+            session["panel_id"] = panel_id
+            session["empresa_id"] = panel.empresa_id
+        return redirect(url_for("main.index"))
+
     empresa_id = session.get('empresa_id', g.user.empresa_id)
     if g.user.role == 'user':
         allowed_panels = [p for p in g.user.panels if p.empresa_id == empresa_id]
