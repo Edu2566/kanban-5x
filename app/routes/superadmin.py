@@ -109,8 +109,7 @@ def add_user_to_panels(usuario):
 @superadmin_bp.route('/')
 def dashboard():
     empresas = Empresa.query.all()
-    panels = Panel.query.all()
-    return render_template('superadmin/dashboard.html', empresas=empresas, panels=panels)
+    return render_template('superadmin/dashboard.html', empresas=empresas)
 
 
 @superadmin_bp.route('/empresa/<int:empresa_id>')
