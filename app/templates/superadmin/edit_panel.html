@@ -9,7 +9,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Empresa</label>
-        <select name="empresa_id" class="form-select">
+        <select name="empresa_id" id="empresaSelect" class="form-select">
             {% for emp in empresas %}
                 <option value="{{ emp.id }}" {% if emp.id == panel.empresa_id %}selected{% endif %}>{{ emp.nome }}</option>
             {% endfor %}
@@ -27,6 +27,18 @@
     <input type="hidden" name="next" value="{{ request.args.get('next') }}">
     <button type="submit" class="btn btn-primary">Salvar</button>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('empresaSelect');
+    if (select) {
+        select.addEventListener('change', e => {
+            const url = new URL(window.location);
+            url.searchParams.set('empresa_id', e.target.value);
+            window.location = url.toString();
+        });
+    }
+});
+</script>
 
 <h3>Colunas</h3>
 <div class="mb-3">
