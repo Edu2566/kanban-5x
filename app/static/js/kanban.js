@@ -108,6 +108,42 @@ function updateColumnStats(columnEl) {
     }
 }
 
+function filterCards() {
+    const title = (document.getElementById('filterTitle')?.value || '').toLowerCase();
+    const min = parseFloat(document.getElementById('filterValorMin')?.value);
+    const max = parseFloat(document.getElementById('filterValorMax')?.value);
+    const vendedor = document.getElementById('filterVendedor')?.value || '';
+    const dateFrom = document.getElementById('filterDateFrom')?.value;
+    const dateTo = document.getElementById('filterDateTo')?.value;
+
+    document.querySelectorAll('.kanban-column').forEach(col => {
+        let total = 0;
+        let count = 0;
+        col.querySelectorAll('.kanban-card').forEach(card => {
+            const cardTitle = card.dataset.title.toLowerCase();
+            const valor = parseFloat(card.dataset.valor) || 0;
+            const vend = card.dataset.vendedorId;
+            const created = card.dataset.createdAt ? new Date(card.dataset.createdAt) : null;
+            let show = true;
+            if (title && !cardTitle.includes(title)) show = false;
+            if (vendedor && vend !== vendedor) show = false;
+            if (!isNaN(min) && valor < min) show = false;
+            if (!isNaN(max) && valor > max) show = false;
+            if (dateFrom && created && created < new Date(dateFrom)) show = false;
+            if (dateTo && created && created > new Date(dateTo + 'T23:59:59')) show = false;
+            card.style.display = show ? '' : 'none';
+            if (show) {
+                count++;
+                total += valor;
+            }
+        });
+        const badge = col.querySelector('.kanban-header .badge');
+        if (badge) {
+            badge.textContent = `${count} • ${formatBRL(total)}`;
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggleForm = document.getElementById('toggleThemeForm');
     if (toggleForm) {
@@ -207,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.dataset.vendedorId = card.vendedor_id || '';
         div.dataset.columnId = card.column_id;
         div.dataset.custom = JSON.stringify(card.custom_data || {});
+        div.dataset.createdAt = card.created_at;
         div.onclick = () => openEditModal(div);
         const titleDiv = document.createElement('div');
         titleDiv.className = 'card-title';
@@ -224,6 +261,13 @@ document.addEventListener('DOMContentLoaded', () => {
             descDiv.appendChild(link);
         }
         div.appendChild(descDiv);
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'card-date text-muted small';
+        if (card.created_at) {
+            const d = new Date(card.created_at);
+            dateDiv.textContent = d.toLocaleDateString('pt-BR');
+        }
+        div.appendChild(dateDiv);
         return div;
     }
 
@@ -249,15 +293,26 @@ document.addEventListener('DOMContentLoaded', () => {
         existing.dataset.vendedorId = card.vendedor_id || '';
         existing.dataset.columnId = card.column_id;
         existing.dataset.custom = JSON.stringify(card.custom_data || {});
+        existing.dataset.createdAt = card.created_at;
         existing.querySelector('.card-title').textContent = card.title;
-        existing.querySelector('.card-desc').textContent = `${formatBRL(card.valor_negociado)} - ${card.vendedor_name || ''}`;
+        const descEl = existing.querySelector('.card-desc');
+        descEl.textContent = `${formatBRL(card.valor_negociado)} - ${card.vendedor_name || ''}`;
         if (card.conversa) {
             const link = document.createElement('a');
             link.href = card.conversa;
             link.target = '_blank';
             link.className = 'text-decoration-none eye-link';
             link.innerHTML = '<i class="fa-solid fa-eye text-primary"></i>';
-            existing.querySelector('.card-desc').appendChild(link);
+            descEl.appendChild(link);
+        }
+        const dateEl = existing.querySelector('.card-date');
+        if (dateEl) {
+            if (card.created_at) {
+                const d = new Date(card.created_at);
+                dateEl.textContent = d.toLocaleDateString('pt-BR');
+            } else {
+                dateEl.textContent = '';
+            }
         }
         if (oldColumn != card.column_id) {
             const columnDiv = document.querySelector(`#column-${card.column_id}`);
@@ -280,13 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (evt.type) {
             case 'card_created':
                 addCard(evt.card);
+                filterCards();
                 break;
             case 'card_updated':
             case 'card_moved':
                 updateCard(evt.card);
+                filterCards();
                 break;
             case 'card_deleted':
                 removeCard(evt.card_id);
+                filterCards();
                 break;
             case 'column_created':
             case 'column_updated':
@@ -306,4 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
             handleEvent(data);
         } catch (_) {}
     };
+
+    ['filterTitle','filterValorMin','filterValorMax','filterVendedor','filterDateFrom','filterDateTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', filterCards);
+    });
+    filterCards();
 });

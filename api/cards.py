@@ -38,6 +38,7 @@ def _serialize(card: Card):
         "vendedor_id": card.vendedor_id,
         "vendedor_name": card.vendedor.user_name if card.vendedor else None,
         "custom_data": card.custom_data,
+        "created_at": card.created_at.isoformat() if card.created_at else None,
     }
 
 
