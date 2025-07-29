@@ -12,6 +12,17 @@ function openEditColumnModal(columnId, columnName) {
     new bootstrap.Modal(document.getElementById('editColumnModal')).show();
 }
 
+function openAddColumnModal() {
+    const panelSelect = document.getElementById('panelSelect');
+    const panelId = panelSelect ? panelSelect.value : '';
+    const form = document.getElementById('addColumnForm');
+    if (form) {
+        form.querySelector('input[name="panel_id"]').value = panelId;
+        form.querySelector('input[name="name"]').value = '';
+    }
+    new bootstrap.Modal(document.getElementById('addColumnModal')).show();
+}
+
 function openAddCardModal(columnId) {
     const select = document.getElementById('addCardColumnSelect');
     if (select) {
@@ -125,6 +136,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addCardColumnSelect && addCardForm) {
         addCardColumnSelect.addEventListener('change', () => {
             addCardForm.action = "/add_card/" + addCardColumnSelect.value;
+        });
+    }
+
+    const panelSelect = document.getElementById('panelSelect');
+    const addColumnForm = document.getElementById('addColumnForm');
+    if (panelSelect && addColumnForm) {
+        panelSelect.addEventListener('change', () => {
+            addColumnForm.querySelector('input[name="panel_id"]').value = panelSelect.value;
         });
     }
 

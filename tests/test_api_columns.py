@@ -71,3 +71,15 @@ def test_columns_crud():
 
         resp = client.get(f'/api/columns/{column_id}', headers=headers)
         assert resp.status_code == 404
+
+
+def test_create_column_requires_panel():
+    app = setup_app()
+    with app.app_context():
+        empresa = create_empresa()
+        create_panel(empresa)
+        client = app.test_client()
+        headers = {'Authorization': 'Bearer token'}
+
+        resp = client.post('/api/columns', json={'name': 'Todo'}, headers=headers)
+        assert resp.status_code == 400
