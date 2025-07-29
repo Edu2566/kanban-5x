@@ -57,7 +57,7 @@
               data-id="{{ col.id }}" data-name="{{ col.name }}" data-color="{{ col.color }}">
         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
       </button>
-      <form method="post" action="{{ url_for('superadmin.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
+      <form method="post" action="{{ url_for('panels.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
         <input type="hidden" name="next" value="{{ url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token']) }}">
         <button type="submit" class="btn btn-outline-danger btn-sm">
           <i class="fa-solid fa-trash me-1"></i>Deletar
