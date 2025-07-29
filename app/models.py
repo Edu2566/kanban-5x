@@ -1,3 +1,4 @@
+from datetime import datetime
 from . import db
 
 
@@ -88,4 +89,5 @@ class Card(db.Model):
     vendedor = db.relationship('Usuario', back_populates='cards_vendedor')
     # dados customizáveis do card conforme definições em Empresa.custom_fields
     custom_data = db.Column(db.JSON, nullable=False, default=dict)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
