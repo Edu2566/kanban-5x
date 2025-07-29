@@ -92,6 +92,20 @@ def redirect_next(default_endpoint):
     return redirect(url_for(default_endpoint, token=session.get('superadmin_token')))
 
 
+
+def add_user_to_panels(usuario):
+    """Attach usuario to panels based on role and company."""
+    if usuario.role == "superadmin":
+        panels = Panel.query.all()
+    elif usuario.role == "gestor":
+        panels = Panel.query.filter_by(empresa_id=usuario.empresa_id).all()
+    else:
+        panels = []
+    for p in panels:
+        if usuario not in p.usuarios:
+            p.usuarios.append(usuario)
+    db.session.commit()
+
 @superadmin_bp.route('/')
 def dashboard():
     empresas = Empresa.query.all()
@@ -177,6 +191,8 @@ def create_vendedor():
         )
         db.session.add(usuario)
         db.session.commit()
+        add_user_to_panels(usuario)
+        db.session.commit()
         return redirect_next('superadmin.dashboard')
     return render_template('superadmin/create_vendedor.html', empresas=empresas)
 
@@ -191,6 +207,8 @@ def edit_vendedor(vendedor_id):
         usuario.user_name = request.form['user_name']
         usuario.role = request.form['role']
         usuario.empresa_id = int(request.form['empresa_id'])
+        db.session.commit()
+        add_user_to_panels(usuario)
         db.session.commit()
         return redirect_next('superadmin.dashboard')
     return render_template('superadmin/edit_vendedor.html', usuario=usuario, empresas=empresas)

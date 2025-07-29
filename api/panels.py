@@ -1,4 +1,5 @@
 from flask import request, jsonify, current_app
+from app.panel_utils import add_default_panel_users
 
 from app.models import db, Panel, Usuario
 
@@ -46,6 +47,7 @@ def create_panel():
         Usuario.query.filter(Usuario.id.in_(usuario_ids)).all() if usuario_ids else []
     )
     panel = Panel(name=name, empresa_id=empresa_id, usuarios=usuarios)
+    add_default_panel_users(panel)
     db.session.add(panel)
     db.session.commit()
     publish_event(current_app, empresa_id, {
@@ -69,6 +71,7 @@ def update_panel(panel_id):
     panel.name = name
     panel.empresa_id = empresa_id
     panel.usuarios = usuarios
+    add_default_panel_users(panel)
     db.session.commit()
     publish_event(current_app, panel.empresa_id, {
         'type': 'panel_updated',

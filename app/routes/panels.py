@@ -5,6 +5,7 @@ from .superadmin import _require_token, redirect_next
 from ..sse import publish_event
 from api.panels import _serialize as serialize_panel
 from api.columns import _serialize as serialize_column
+from ..panel_utils import add_default_panel_users
 
 panels_bp = Blueprint('panels', __name__, url_prefix='/superadmin')
 
@@ -26,6 +27,7 @@ def create_panel():
         panel = Panel(name=name, empresa_id=empresa_id)
         if user_ids:
             panel.usuarios = Usuario.query.filter(Usuario.id.in_(user_ids)).all()
+        add_default_panel_users(panel)
         db.session.add(panel)
         db.session.commit()
         publish_event(current_app, empresa_id, {
@@ -62,6 +64,7 @@ def edit_panel(panel_id):
         panel.empresa_id = int(request.form['empresa_id'])
         user_ids = [int(uid) for uid in request.form.getlist('usuario_ids')]
         panel.usuarios = Usuario.query.filter(Usuario.id.in_(user_ids)).all()
+        add_default_panel_users(panel)
         db.session.commit()
         publish_event(current_app, panel.empresa_id, {
             'type': 'panel_updated',
