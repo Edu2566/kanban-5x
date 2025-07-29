@@ -37,6 +37,9 @@ body.dark-mode {
 .dark-mode .kanban-card .card-desc {
     color: #fff;
 }
+.dark-mode .kanban-card .card-date {
+    color: #ccc;
+}
 
 /* Dark mode modal styling */
 .dark-mode .modal-content {

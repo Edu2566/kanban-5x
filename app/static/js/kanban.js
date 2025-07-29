@@ -96,6 +96,12 @@ function formatBRL(value) {
     });
 }
 
+function formatDate(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    return d.toLocaleDateString('pt-BR');
+}
+
 function updateColumnStats(columnEl) {
     const cards = columnEl.querySelectorAll('.kanban-card');
     let total = 0;
@@ -278,6 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
             descDiv.appendChild(link);
         }
         div.appendChild(descDiv);
+        const dateEl = document.createElement('small');
+        dateEl.className = 'card-date text-muted';
+        dateEl.textContent = `Data da Oportunidade: ${formatDate(card.created_at)}`;
+        div.appendChild(dateEl);
         return div;
     }
 
@@ -314,6 +324,15 @@ document.addEventListener('DOMContentLoaded', () => {
             link.className = 'text-decoration-none eye-link';
             link.innerHTML = '<i class="fa-solid fa-eye text-primary"></i>';
             existing.querySelector('.card-desc').appendChild(link);
+        }
+        const dateEl = existing.querySelector('.card-date');
+        if (dateEl) {
+            dateEl.textContent = `Data da Oportunidade: ${formatDate(card.created_at)}`;
+        } else {
+            const newDateEl = document.createElement('small');
+            newDateEl.className = 'card-date text-muted';
+            newDateEl.textContent = `Data da Oportunidade: ${formatDate(card.created_at)}`;
+            existing.appendChild(newDateEl);
         }
         if (oldColumn != card.column_id) {
             const columnDiv = document.querySelector(`#column-${card.column_id}`);

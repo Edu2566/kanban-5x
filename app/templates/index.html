@@ -100,9 +100,9 @@
                      data-conversation-id="{{ card.conversation_id|default('') }}"
                      data-vendedor-id="{{ card.vendedor_id }}"
                      data-column-id="{{ column.id }}"
-                     data-created-at="{{ card.created_at.isoformat() }}"
-                     data-custom='{{ card.custom_data | tojson }}'
-                    onclick="openEditModal(this)">
+                    data-created-at="{{ card.created_at.isoformat() }}"
+                    data-custom='{{ card.custom_data | tojson }}'
+                   onclick="openEditModal(this)">
                     <div class="card-title">{{ card.title }}</div>
                     <div class="card-desc">
                         {{ card.valor_negociado|brl }} - {{ card.vendedor.user_name }}
@@ -112,6 +112,7 @@
                         </a>
                         {% endif %}
                     </div>
+                    <small class="card-date text-muted">Data da Oportunidade: {{ card.created_at.strftime('%d/%m/%Y') }}</small>
                 </div>
                 {% endfor %}
             </div>

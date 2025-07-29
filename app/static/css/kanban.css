@@ -90,6 +90,11 @@ body {
     top: 0.5rem;
     right: 0.5rem;
 }
+.kanban-card .card-date {
+    font-size: .8rem;
+    color: #6c757d;
+    margin-top: .25rem;
+}
 .modal-header { background: #f0f3fc; border-bottom: none; }
 .modal-footer { border-top: none; }
 .add-form input, .add-form button { border-radius: 8px; }
