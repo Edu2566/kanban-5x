@@ -156,6 +156,10 @@
                       {% endfor %}
                   </select>
               </div>
+              <div class="mb-3">
+                  <label for="modalCardCreatedAt" class="form-label">Data de Criação</label>
+                  <input type="text" readonly class="form-control" id="modalCardCreatedAt">
+              </div>
               {% for field in custom_fields %}
               <div class="mb-3">
               {% if field.type == 'text' %}
@@ -264,6 +268,10 @@
                 <option value="{{ vendedor.id }}" {% if vendedor.id == g.user.id %}selected{% endif %}>{{ vendedor.user_name }}</option>
                 {% endfor %}
               </select>
+            </div>
+            <div class="mb-3">
+              <label for="modalAddCardCreatedAt" class="form-label">Data de Criação</label>
+              <input type="text" readonly class="form-control" id="modalAddCardCreatedAt">
             </div>
             {% for field in custom_fields %}
             <div class="mb-3">

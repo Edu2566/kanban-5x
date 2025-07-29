@@ -35,6 +35,7 @@ function openAddCardModal(columnId) {
     document.getElementById('modalAddCardConversa').value = '';
     document.getElementById('modalAddCardConversationId').value = '';
     document.getElementById('modalAddCardVendedor').value = currentUserId;
+    document.getElementById('modalAddCardCreatedAt').value = '';
     document.querySelectorAll('#addCardModal [name^="custom_"]').forEach(input => {
         if (input.type === 'checkbox') {
             input.checked = false;
@@ -52,6 +53,7 @@ function openEditModal(cardDiv) {
     const conversa = cardDiv.getAttribute('data-conversa') || '';
     const conversationId = cardDiv.getAttribute('data-conversation-id') || '';
     const vendedor = cardDiv.getAttribute('data-vendedor-id') || '';
+    const createdAt = cardDiv.getAttribute('data-created-at') || '';
     const customRaw = cardDiv.getAttribute('data-custom') || '{}';
     let customData = {};
     try {
@@ -66,6 +68,7 @@ function openEditModal(cardDiv) {
     document.getElementById('modalCardConversa').value = conversa;
     document.getElementById('modalCardConversationId').value = conversationId;
     document.getElementById('modalCardVendedor').value = vendedor;
+    document.getElementById('modalCardCreatedAt').value = formatDateTime(createdAt);
     document.getElementById('editCardForm').action = "/edit_card/" + cardId;
 
     // Pre-fill custom field inputs
@@ -100,6 +103,12 @@ function formatDate(value) {
     if (!value) return '';
     const d = new Date(value);
     return d.toLocaleDateString('pt-BR');
+}
+
+function formatDateTime(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    return d.toLocaleString('pt-BR');
 }
 
 function updateColumnStats(columnEl) {
@@ -184,6 +193,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addCardColumnSelect && addCardForm) {
         addCardColumnSelect.addEventListener('change', () => {
             addCardForm.action = "/add_card/" + addCardColumnSelect.value;
+        });
+        addCardForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            fetch(addCardForm.action, { method: 'POST', body: new FormData(addCardForm) })
+                .then(resp => {
+                    if (resp.ok) {
+                        document.getElementById('modalAddCardCreatedAt').value = formatDateTime(new Date());
+                    } else {
+                        location.reload();
+                    }
+                })
+                .catch(() => location.reload());
         });
     }
 
