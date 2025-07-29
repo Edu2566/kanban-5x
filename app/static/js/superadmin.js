@@ -76,9 +76,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const createColumnModal = document.getElementById('createColumnModal');
     if (createColumnModal) {
-        createColumnModal.addEventListener('show.bs.modal', event => {
+        const form = createColumnModal.querySelector('form');
+        const select = createColumnModal.querySelector('select[name="panel_id"]');
+        const token = form ? form.dataset.token : '';
+        const match = form ? form.action.match(/[?&]next=([^&]+)/) : null;
+        const nextParam = match ? decodeURIComponent(match[1]) : '';
+
+        function updateCreateColumnAction() {
+            if (!form || !select) return;
+            const panelId = select.value;
+            const params = new URLSearchParams();
+            if (token) params.set('token', token);
+            if (nextParam) params.set('next', nextParam);
+            form.action = `/superadmin/create_column/${panelId}?${params.toString()}`;
+        }
+
+        createColumnModal.addEventListener('show.bs.modal', () => {
             const colorInput = createColumnModal.querySelector('input[name="color"]');
             if (colorInput) colorInput.value = '#000000';
+            updateCreateColumnAction();
         });
+
+        if (select) {
+            select.addEventListener('change', updateCreateColumnAction);
+        }
     }
 });

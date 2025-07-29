@@ -151,7 +151,10 @@
 <div class="modal fade" id="createColumnModal" tabindex="-1" aria-labelledby="createColumnModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-        <form method="post" action="{{ url_for('panels.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
+        <form method="post"
+              action="{{ url_for('panels.create_column', panel_id=panels[0].id if panels else 0, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}"
+              id="createColumnForm"
+              data-token="{{ session['superadmin_token'] }}">
         <div class="modal-header">
           <h5 class="modal-title" id="createColumnModalLabel">Criar Coluna</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -164,6 +167,14 @@
           <div class="mb-3">
             <label class="form-label">Cor</label>
             <input type="color" name="color" value="#000000" class="form-control form-control-color">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Painel</label>
+            <select name="panel_id" id="createColumnPanelSelect" class="form-select">
+              {% for p in panels %}
+              <option value="{{ p.id }}">{{ p.name }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
         <div class="modal-footer">
