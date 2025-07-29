@@ -17,7 +17,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Custom Fields (JSON)</label>
-        <textarea name="custom_fields" rows="4" class="form-control">{{ empresa.custom_fields|tojson }}</textarea>
+        <textarea name="custom_fields" rows="4" class="form-control" placeholder='[{"name":"Status","type":"select","options":["A","B"]}]'>{{ empresa.custom_fields|tojson }}</textarea>
         <small class="text-muted">Informe uma lista JSON de até 8 objetos { "name": "...", "type": "text|number|boolean|select", "options": ["A", "B"] } para select.</small>
     </div>
     <input type="hidden" name="token" value="{{ request.args.get('token') }}">
