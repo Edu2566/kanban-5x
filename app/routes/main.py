@@ -47,9 +47,11 @@ def index():
         if panel_id not in allowed_ids:
             panel_id = allowed_panels[0].id
         session['panel_id'] = panel_id
-        columns = Column.query.filter_by(
-            empresa_id=empresa_id, panel_id=panel_id
-        ).all()
+        columns = (
+            Column.query.join(Panel)
+            .filter(Panel.empresa_id == empresa_id, Column.panel_id == panel_id)
+            .all()
+        )
         panel_user_ids = {u.id for u in Panel.query.get(panel_id).usuarios}
     else:
         session.pop('panel_id', None)
@@ -92,13 +94,9 @@ def add_column():
     name = request.form['name']
     panel_id = request.form.get('panel_id', type=int) or session.get('panel_id')
     panel = Panel.query.get(panel_id) if panel_id else None
-    if panel:
-        if not has_panel_access(panel):
-            return 'Acesso negado', 403
-        empresa_id = panel.empresa_id
-    else:
-        empresa_id = g.user.empresa_id
-    column = Column(name=name, empresa_id=empresa_id, panel_id=panel_id)
+    if panel and not has_panel_access(panel):
+        return 'Acesso negado', 403
+    column = Column(name=name, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
     return redirect(url_for('main.index'))
@@ -107,7 +105,7 @@ def add_column():
 @login_required
 def edit_column(column_id):
     column = Column.query.get_or_404(column_id)
-    if column.empresa_id != g.user.empresa_id:
+    if column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     if column.panel and not has_panel_access(column.panel):
         return 'Acesso negado', 403
@@ -119,7 +117,7 @@ def edit_column(column_id):
 @login_required
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
-    if column.empresa_id != g.user.empresa_id:
+    if column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     if column.panel and not has_panel_access(column.panel):
         return 'Acesso negado', 403
@@ -131,7 +129,7 @@ def delete_column(column_id):
 @login_required
 def add_card(column_id):
     column = Column.query.get_or_404(column_id)
-    if column.empresa_id != g.user.empresa_id:
+    if column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     panel = column.panel
     if panel and not has_panel_access(panel):
@@ -167,7 +165,7 @@ def add_card(column_id):
 @login_required
 def edit_card(card_id):
     card = Card.query.get_or_404(card_id)
-    if card.column.empresa_id != g.user.empresa_id:
+    if card.column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     if card.column.panel and not has_panel_access(card.column.panel):
         return 'Acesso negado', 403
@@ -199,7 +197,7 @@ def edit_card(card_id):
 @login_required
 def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
-    if card.column.empresa_id != g.user.empresa_id:
+    if card.column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     if card.column.panel and not has_panel_access(card.column.panel):
         return 'Acesso negado', 403
@@ -213,7 +211,7 @@ def delete_card(card_id):
 @login_required
 def move_card(card_id):
     card = Card.query.get_or_404(card_id)
-    if card.column.empresa_id != g.user.empresa_id:
+    if card.column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     panel = card.column.panel
     if panel and not has_panel_access(panel):
@@ -222,7 +220,7 @@ def move_card(card_id):
         return 'Acesso negado', 403
     new_column_id = int(request.form['new_column_id'])
     column = Column.query.get_or_404(new_column_id)
-    if column.empresa_id != g.user.empresa_id:
+    if column.panel.empresa_id != g.user.empresa_id:
         abort(404)
     if column.panel and not has_panel_access(column.panel):
         return 'Acesso negado', 403
@@ -241,14 +239,14 @@ def api_move_card():
     card_id = int(data['card_id'])
     new_column_id = int(data['column_id'])
     card = Card.query.get_or_404(card_id)
-    if card.column.empresa_id != g.user.empresa_id:
+    if card.column.panel.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
     if card.column.panel and not has_panel_access(card.column.panel):
         return jsonify({'success': False}), 403
     if g.user.role != 'gestor' and card.vendedor_id != g.user.id:
         return jsonify({'success': False}), 403
     column = Column.query.get_or_404(new_column_id)
-    if column.empresa_id != g.user.empresa_id:
+    if column.panel.empresa_id != g.user.empresa_id:
         return jsonify({'success': False}), 404
     if column.panel and not has_panel_access(column.panel):
         return jsonify({'success': False}), 403

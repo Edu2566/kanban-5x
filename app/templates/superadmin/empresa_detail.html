@@ -5,7 +5,7 @@
 <p>Account ID: {{ empresa.account_id }}</p>
 <div class="mb-3">
   <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createVendedorModal" data-empresa="{{ empresa.id }}">Novo Vendedor/Gestor</button>
-  <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createColumnModal" data-empresa="{{ empresa.id }}">Nova Coluna</button>
+  <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#createColumnModal">Nova Coluna</button>
   <a href="{{ url_for('panels.create_panel', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-secondary btn-sm">Novo Painel</a>
 </div>
 <h3>Vendedores</h3>
@@ -54,7 +54,7 @@
     <span>{{ col.name }}</span>
     <div>
       <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editColumnModalSuper"
-              data-id="{{ col.id }}" data-name="{{ col.name }}" data-empresa="{{ col.empresa_id }}" data-color="{{ col.color }}">
+              data-id="{{ col.id }}" data-name="{{ col.name }}" data-color="{{ col.color }}">
         <i class="fa-regular fa-pen-to-square me-1"></i>Editar
       </button>
       <form method="post" action="{{ url_for('superadmin.delete_column', column_id=col.id, token=session['superadmin_token']) }}" class="d-inline">
@@ -88,14 +88,6 @@
           <div class="mb-3">
             <label class="form-label">User Name</label>
             <input type="text" name="user_name" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Role</label>
@@ -138,14 +130,6 @@
             <input type="text" name="user_name" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="mb-3">
             <label class="form-label">Role</label>
             <select name="role" class="form-select">
               <option value="usuario">Usuário</option>
@@ -167,7 +151,7 @@
 <div class="modal fade" id="createColumnModal" tabindex="-1" aria-labelledby="createColumnModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" action="{{ url_for('superadmin.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
+        <form method="post" action="{{ url_for('superadmin.create_column', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createColumnForm">
         <div class="modal-header">
           <h5 class="modal-title" id="createColumnModalLabel">Criar Coluna</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -181,7 +165,6 @@
             <label class="form-label">Cor</label>
             <input type="color" name="color" value="#000000" class="form-control form-control-color">
           </div>
-          <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -209,14 +192,6 @@
           <div class="mb-3">
             <label class="form-label">Cor</label>
             <input type="color" name="color" class="form-control form-control-color">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Empresa</label>
-            <select name="empresa_id" class="form-select">
-              {% for emp in empresas %}
-                <option value="{{ emp.id }}" {% if emp.id == empresa.id %}selected{% endif %}>{{ emp.nome }}</option>
-              {% endfor %}
-            </select>
           </div>
         </div>
         <div class="modal-footer">

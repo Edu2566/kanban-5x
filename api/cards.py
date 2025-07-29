@@ -48,9 +48,9 @@ def list_cards():
     column_id = request.args.get("column_id", type=int)
     conversation_id = request.args.get("conversation_id")
     if empresa_id or panel_id:
-        query = query.join(Column)
+        query = query.join(Column).join(Panel)
     if empresa_id:
-        query = query.filter(Column.empresa_id == empresa_id)
+        query = query.filter(Panel.empresa_id == empresa_id)
     if panel_id:
         query = query.filter(Column.panel_id == panel_id)
     if column_id:

@@ -19,7 +19,7 @@ def setup_data():
     panel = Panel(name='P', empresa_id=empresa.id)
     db.session.add(panel)
     db.session.commit()
-    col = Column(name='Todo', empresa_id=empresa.id, panel_id=panel.id)
+    col = Column(name='Todo', panel_id=panel.id)
     user1 = Usuario(user_id='1', user_email='a@a.com', user_name='A', role='user', empresa_id=empresa.id)
     user2 = Usuario(user_id='2', user_email='b@b.com', user_name='B', role='user', empresa_id=empresa.id)
     panel.usuarios.append(user1)

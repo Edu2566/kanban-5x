@@ -103,7 +103,7 @@ def dashboard():
 def empresa_detail(empresa_id):
     empresa = Empresa.query.get_or_404(empresa_id)
     vendedores = Usuario.query.filter_by(empresa_id=empresa_id).all()
-    columns = Column.query.filter_by(empresa_id=empresa_id).all()
+    columns = Column.query.join(Panel).filter(Panel.empresa_id == empresa_id).all()
     panels = Panel.query.filter_by(empresa_id=empresa_id).all()
     return render_template(
         'superadmin/empresa_detail.html',

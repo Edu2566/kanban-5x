@@ -65,24 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
-            const empresaId = button.getAttribute('data-empresa');
             const color = button.getAttribute('data-color') || '#000000';
             const form = editColumnModal.querySelector('form');
             form.action = `/superadmin/edit_column/${id}`;
             form.querySelector('input[name="name"]').value = name;
             const colorInput = form.querySelector('input[name="color"]');
             if (colorInput) colorInput.value = color;
-            fillSelectOptions(form.querySelector('select[name="empresa_id"]'), null, empresaId);
         });
     }
 
     const createColumnModal = document.getElementById('createColumnModal');
     if (createColumnModal) {
         createColumnModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            const empresaId = button.getAttribute('data-empresa');
-            const idInput = createColumnModal.querySelector('input[name="empresa_id"]');
-            if (idInput) idInput.value = empresaId;
             const colorInput = createColumnModal.querySelector('input[name="color"]');
             if (colorInput) colorInput.value = '#000000';
         });

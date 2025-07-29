@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from flask import g
 
 from app import create_app, db
-from app.models import Empresa, Usuario, Column, Card
+from app.models import Empresa, Usuario, Column, Card, Panel
 
 
 def setup_basic_data():
@@ -14,8 +14,9 @@ def setup_basic_data():
     db.session.add(empresa)
     db.session.commit()
     usuario = Usuario(user_id='1', user_email='u@example.com', user_name='U', role='user', empresa_id=empresa.id)
-    column = Column(name='Todo', empresa_id=empresa.id)
-    db.session.add_all([usuario, column])
+    panel = Panel(name='Main', empresa_id=empresa.id)
+    column = Column(name='Todo', panel_id=panel.id)
+    db.session.add_all([usuario, panel, column])
     db.session.commit()
     return usuario, column
 
