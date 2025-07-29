@@ -91,10 +91,15 @@ def index():
 @main.route('/add_column', methods=['POST'])
 @login_required
 def add_column():
+    """Create a column tied to the current panel."""
     name = request.form['name']
-    panel_id = request.form.get('panel_id', type=int) or session.get('panel_id')
-    panel = Panel.query.get(panel_id) if panel_id else None
-    if panel and not has_panel_access(panel):
+    panel_id = request.form.get('panel_id', type=int)
+    if not panel_id:
+        return 'panel_id required', 400
+    panel = Panel.query.get_or_404(panel_id)
+    if panel.empresa_id != g.user.empresa_id:
+        abort(404)
+    if not has_panel_access(panel):
         return 'Acesso negado', 403
     column = Column(name=name, panel_id=panel_id)
     db.session.add(column)
@@ -105,9 +110,10 @@ def add_column():
 @login_required
 def edit_column(column_id):
     column = Column.query.get_or_404(column_id)
-    if column.panel.empresa_id != g.user.empresa_id:
+    panel = column.panel
+    if not panel or panel.empresa_id != g.user.empresa_id:
         abort(404)
-    if column.panel and not has_panel_access(column.panel):
+    if not has_panel_access(panel):
         return 'Acesso negado', 403
     column.name = request.form['name']
     db.session.commit()
@@ -117,9 +123,10 @@ def edit_column(column_id):
 @login_required
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
-    if column.panel.empresa_id != g.user.empresa_id:
+    panel = column.panel
+    if not panel or panel.empresa_id != g.user.empresa_id:
         abort(404)
-    if column.panel and not has_panel_access(column.panel):
+    if not has_panel_access(panel):
         return 'Acesso negado', 403
     db.session.delete(column)
     db.session.commit()
