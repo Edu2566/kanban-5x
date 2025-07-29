@@ -36,7 +36,7 @@ def test_columns_crud():
         headers = {'Authorization': 'Bearer token'}
 
         # Create
-        resp = client.post('/api/columns', json={'name': 'Todo', 'empresa_id': empresa.id, 'panel_id': panel.id, 'color': '#ff0000'}, headers=headers)
+        resp = client.post('/api/columns', json={'name': 'Todo', 'panel_id': panel.id, 'color': '#ff0000'}, headers=headers)
         assert resp.status_code == 201
         data = resp.get_json()
         assert data['name'] == 'Todo'
@@ -53,7 +53,7 @@ def test_columns_crud():
         assert data['color'] == '#ff0000'
 
         # Update
-        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'empresa_id': empresa.id, 'panel_id': panel.id, 'color': '#00ff00'}, headers=headers)
+        resp = client.put(f'/api/columns/{column_id}', json={'name': 'Doing', 'panel_id': panel.id, 'color': '#00ff00'}, headers=headers)
         assert resp.status_code == 200
         data = resp.get_json()
         assert data['name'] == 'Doing'
