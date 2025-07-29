@@ -35,9 +35,6 @@
         <button type="button" class="btn btn-success py-2 px-3" onclick="openAddCardModal({{ columns[0].id }}); return false;">
             <i class="fa-solid fa-plus me-1"></i>Adicionar Card
         </button>
-        <button type="button" class="btn btn-outline-primary py-2 px-3" onclick="openAddColumnModal(); return false;">
-            <i class="fa-solid fa-plus me-1"></i>Nova Coluna
-        </button>
         {% else %}
         <button type="button" class="btn btn-success py-2 px-3" disabled title="Crie uma coluna primeiro">
             <i class="fa-solid fa-plus me-1"></i>Adicionar Card
@@ -191,33 +188,6 @@
           </div>
         </form>
       </div>
-  </div>
-</div>
-
-<!-- Modal Adicionar Coluna -->
-<div class="modal fade" id="addColumnModal" tabindex="-1" aria-labelledby="addColumnModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="addColumnForm" method="post" action="{{ url_for('main.add_column') }}">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addColumnModalLabel">Adicionar Coluna</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="panel_id" value="{{ active_panel_id }}">
-          <div class="mb-3">
-            <label class="form-label">Nome da Coluna</label>
-            <input type="text" name="name" class="form-control" required>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary py-2 px-3" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success py-2 px-3">
-            <i class="fa-solid fa-plus me-1"></i>Adicionar
-          </button>
-        </div>
-      </form>
-    </div>
   </div>
 </div>
 
