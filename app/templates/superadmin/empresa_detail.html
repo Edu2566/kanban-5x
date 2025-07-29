@@ -9,6 +9,7 @@
   <a href="{{ url_for('panels.create_panel', empresa_id=empresa.id, token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" class="btn btn-outline-secondary btn-sm">Novo Painel</a>
 </div>
 <h3>Vendedores</h3>
+<div class="scroll-area">
 <ul>
   {% for usr in vendedores %}
   <li class="d-flex justify-content-between align-items-center">
@@ -28,7 +29,9 @@
   </li>
   {% endfor %}
 </ul>
+</div>
 <h3>Painéis</h3>
+<div class="scroll-area">
 <ul>
   {% for panel in panels %}
   <li class="d-flex justify-content-between align-items-center">
@@ -45,9 +48,10 @@
       </form>
     </div>
   </li>
-  {% endfor %}
 </ul>
+</div>
 <h3>Colunas</h3>
+<div class="scroll-area">
 <ul>
   {% for col in columns %}
   <li class="d-flex justify-content-between align-items-center">
@@ -67,6 +71,7 @@
   </li>
   {% endfor %}
 </ul>
+</div>
 <!-- Modal Criar Vendedor -->
 <div class="modal fade" id="createVendedorModal" tabindex="-1" aria-labelledby="createVendedorModalLabel" aria-hidden="true">
   <div class="modal-dialog">
