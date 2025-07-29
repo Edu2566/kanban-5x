@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g
+from flask import Blueprint, render_template, request, redirect, url_for, session, abort, g, current_app
 
 from ..models import db, Panel, Empresa, Usuario, Column
 from .superadmin import _require_token, redirect_next
+from ..sse import publish_event
+from api.panels import _serialize as serialize_panel
+from api.columns import _serialize as serialize_column
 
 panels_bp = Blueprint('panels', __name__, url_prefix='/superadmin')
 
@@ -25,6 +28,10 @@ def create_panel():
             panel.usuarios = Usuario.query.filter(Usuario.id.in_(user_ids)).all()
         db.session.add(panel)
         db.session.commit()
+        publish_event(current_app, empresa_id, {
+            'type': 'panel_created',
+            'panel': serialize_panel(panel)
+        })
         return redirect_next('superadmin.dashboard')
 
     empresa_id = request.args.get('empresa_id', type=int)
@@ -56,6 +63,10 @@ def edit_panel(panel_id):
         user_ids = [int(uid) for uid in request.form.getlist('usuario_ids')]
         panel.usuarios = Usuario.query.filter(Usuario.id.in_(user_ids)).all()
         db.session.commit()
+        publish_event(current_app, panel.empresa_id, {
+            'type': 'panel_updated',
+            'panel': serialize_panel(panel)
+        })
         return redirect_next('superadmin.dashboard')
 
     usuarios = (
@@ -74,8 +85,13 @@ def edit_panel(panel_id):
 @panels_bp.route('/delete_panel/<int:panel_id>', methods=['POST'])
 def delete_panel(panel_id):
     panel = Panel.query.get_or_404(panel_id)
+    empresa_id = panel.empresa_id
     db.session.delete(panel)
     db.session.commit()
+    publish_event(current_app, empresa_id, {
+        'type': 'panel_deleted',
+        'panel_id': panel_id
+    })
     return redirect_next('superadmin.dashboard')
 
 
@@ -94,6 +110,10 @@ def create_column(panel_id):
         )
         db.session.add(column)
         db.session.commit()
+        publish_event(current_app, panel.empresa_id, {
+            'type': 'column_created',
+            'column': serialize_column(column)
+        })
         next_url = request.form.get('next') or request.args.get('next')
         if next_url:
             return redirect(next_url)
@@ -118,6 +138,10 @@ def edit_column(column_id):
         panel = Panel.query.get_or_404(panel_id)
         column.panel_id = panel_id
         db.session.commit()
+        publish_event(current_app, column.panel.empresa_id, {
+            'type': 'column_updated',
+            'column': serialize_column(column)
+        })
         next_url = request.form.get('next') or request.args.get('next')
         if next_url:
             return redirect(next_url)
@@ -135,8 +159,13 @@ def edit_column(column_id):
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
     panel_id = column.panel_id
+    empresa_id = column.panel.empresa_id
     db.session.delete(column)
     db.session.commit()
+    publish_event(current_app, empresa_id, {
+        'type': 'column_deleted',
+        'column_id': column_id
+    })
     next_url = request.form.get('next') or request.args.get('next')
     if next_url:
         return redirect(next_url)

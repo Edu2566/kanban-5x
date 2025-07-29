@@ -42,6 +42,9 @@ def create_app():
     from .routes.superadmin import superadmin_bp
     from .routes.panels import panels_bp
     from api import api_bp
+    from .sse import init_app as init_sse
+
+    init_sse(app)
     app.register_blueprint(main)
     app.register_blueprint(webhook_bp)
     app.register_blueprint(auth_bp)

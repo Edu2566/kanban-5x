@@ -177,4 +177,116 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    function createCardEl(card) {
+        const div = document.createElement('div');
+        div.className = 'kanban-card';
+        div.setAttribute('draggable', 'true');
+        div.dataset.cardId = card.id;
+        div.dataset.title = card.title;
+        div.dataset.valor = card.valor_negociado || '';
+        div.dataset.conversa = card.conversa || '';
+        div.dataset.conversationId = card.conversation_id || '';
+        div.dataset.vendedorId = card.vendedor_id || '';
+        div.dataset.columnId = card.column_id;
+        div.dataset.custom = JSON.stringify(card.custom_data || {});
+        div.onclick = () => openEditModal(div);
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'card-title';
+        titleDiv.textContent = card.title;
+        div.appendChild(titleDiv);
+        const descDiv = document.createElement('div');
+        descDiv.className = 'card-desc';
+        descDiv.textContent = `${formatBRL(card.valor_negociado)} - ${card.vendedor_name || ''}`;
+        if (card.conversa) {
+            const link = document.createElement('a');
+            link.href = card.conversa;
+            link.target = '_blank';
+            link.className = 'text-decoration-none eye-link';
+            link.innerHTML = '<i class="fa-solid fa-eye text-primary"></i>';
+            descDiv.appendChild(link);
+        }
+        div.appendChild(descDiv);
+        return div;
+    }
+
+    function addCard(card) {
+        const columnDiv = document.querySelector(`#column-${card.column_id}`);
+        if (!columnDiv) return;
+        const cardEl = createCardEl(card);
+        columnDiv.appendChild(cardEl);
+        updateColumnStats(columnDiv.closest('.kanban-column'));
+    }
+
+    function updateCard(card) {
+        const existing = document.querySelector(`.kanban-card[data-card-id='${card.id}']`);
+        if (!existing) {
+            addCard(card);
+            return;
+        }
+        const oldColumn = existing.dataset.columnId;
+        existing.dataset.title = card.title;
+        existing.dataset.valor = card.valor_negociado || '';
+        existing.dataset.conversa = card.conversa || '';
+        existing.dataset.conversationId = card.conversation_id || '';
+        existing.dataset.vendedorId = card.vendedor_id || '';
+        existing.dataset.columnId = card.column_id;
+        existing.dataset.custom = JSON.stringify(card.custom_data || {});
+        existing.querySelector('.card-title').textContent = card.title;
+        existing.querySelector('.card-desc').textContent = `${formatBRL(card.valor_negociado)} - ${card.vendedor_name || ''}`;
+        if (card.conversa) {
+            const link = document.createElement('a');
+            link.href = card.conversa;
+            link.target = '_blank';
+            link.className = 'text-decoration-none eye-link';
+            link.innerHTML = '<i class="fa-solid fa-eye text-primary"></i>';
+            existing.querySelector('.card-desc').appendChild(link);
+        }
+        if (oldColumn != card.column_id) {
+            const columnDiv = document.querySelector(`#column-${card.column_id}`);
+            if (columnDiv) columnDiv.appendChild(existing);
+            updateColumnStats(document.querySelector(`.kanban-column[data-column-id='${oldColumn}']`));
+        }
+        updateColumnStats(document.querySelector(`.kanban-column[data-column-id='${card.column_id}']`));
+    }
+
+    function removeCard(cardId) {
+        const el = document.querySelector(`.kanban-card[data-card-id='${cardId}']`);
+        if (el) {
+            const column = el.closest('.kanban-column');
+            el.remove();
+            updateColumnStats(column);
+        }
+    }
+
+    function handleEvent(evt) {
+        switch (evt.type) {
+            case 'card_created':
+                addCard(evt.card);
+                break;
+            case 'card_updated':
+            case 'card_moved':
+                updateCard(evt.card);
+                break;
+            case 'card_deleted':
+                removeCard(evt.card_id);
+                break;
+            case 'column_created':
+            case 'column_updated':
+            case 'column_deleted':
+            case 'panel_created':
+            case 'panel_updated':
+            case 'panel_deleted':
+                location.reload();
+                break;
+        }
+    }
+
+    const evtSource = new EventSource('/events');
+    evtSource.onmessage = (e) => {
+        try {
+            const data = JSON.parse(e.data);
+            handleEvent(data);
+        } catch (_) {}
+    };
 });

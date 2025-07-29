@@ -1,8 +1,9 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, current_app
 
 from app.models import db, Column, Panel
 
 from . import api_bp, require_superadmin_token
+from app.sse import publish_event
 
 
 def _serialize(column: Column):
@@ -48,6 +49,10 @@ def create_column():
     column = Column(name=name, color=color, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
+    publish_event(current_app, panel.empresa_id, {
+        'type': 'column_created',
+        'column': _serialize(column)
+    })
     return jsonify(_serialize(column)), 201
 
 
@@ -66,6 +71,10 @@ def update_column(column_id):
     column.panel_id = panel_id
     column.color = color
     db.session.commit()
+    publish_event(current_app, panel.empresa_id, {
+        'type': 'column_updated',
+        'column': _serialize(column)
+    })
     return jsonify(_serialize(column))
 
 
@@ -73,6 +82,11 @@ def update_column(column_id):
 @require_superadmin_token
 def delete_column(column_id):
     column = Column.query.get_or_404(column_id)
+    empresa_id = column.panel.empresa_id
     db.session.delete(column)
     db.session.commit()
+    publish_event(current_app, empresa_id, {
+        'type': 'column_deleted',
+        'column_id': column_id
+    })
     return "", 204

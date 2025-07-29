@@ -1,8 +1,9 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 
 from app.models import db, Panel, Usuario
 
 from . import api_bp, require_superadmin_token
+from app.sse import publish_event
 
 
 def _serialize(panel: Panel):
@@ -47,6 +48,10 @@ def create_panel():
     panel = Panel(name=name, empresa_id=empresa_id, usuarios=usuarios)
     db.session.add(panel)
     db.session.commit()
+    publish_event(current_app, empresa_id, {
+        'type': 'panel_created',
+        'panel': _serialize(panel)
+    })
     return jsonify(_serialize(panel)), 201
 
 
@@ -65,6 +70,10 @@ def update_panel(panel_id):
     panel.empresa_id = empresa_id
     panel.usuarios = usuarios
     db.session.commit()
+    publish_event(current_app, panel.empresa_id, {
+        'type': 'panel_updated',
+        'panel': _serialize(panel)
+    })
     return jsonify(_serialize(panel))
 
 
@@ -72,6 +81,11 @@ def update_panel(panel_id):
 @require_superadmin_token
 def delete_panel(panel_id):
     panel = Panel.query.get_or_404(panel_id)
+    empresa_id = panel.empresa_id
     db.session.delete(panel)
     db.session.commit()
+    publish_event(current_app, empresa_id, {
+        'type': 'panel_deleted',
+        'panel_id': panel_id
+    })
     return "", 204

@@ -1,9 +1,10 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, current_app
 
 from app.models import db, Card, Column, Panel, Usuario
 from app.routes.main import MAX_VALOR_NEGOCIADO
 
 from . import api_bp, require_superadmin_token
+from app.sse import publish_event
 
 
 def _build_custom_data(json_data, empresa):
@@ -35,6 +36,7 @@ def _serialize(card: Card):
         "column_id": card.column_id,
         "panel_id": card.column.panel_id if card.column else None,
         "vendedor_id": card.vendedor_id,
+        "vendedor_name": card.vendedor.user_name if card.vendedor else None,
         "custom_data": card.custom_data,
     }
 
@@ -111,6 +113,10 @@ def create_card():
     )
     db.session.add(card)
     db.session.commit()
+    publish_event(current_app, panel.empresa_id, {
+        'type': 'card_created',
+        'card': _serialize(card)
+    })
     return jsonify(_serialize(card)), 201
 
 
@@ -145,6 +151,10 @@ def update_card(card_id):
     card.vendedor_id = vendedor_id
     card.custom_data = custom_data
     db.session.commit()
+    publish_event(current_app, panel.empresa_id, {
+        'type': 'card_updated',
+        'card': _serialize(card)
+    })
     return jsonify(_serialize(card))
 
 
@@ -152,6 +162,12 @@ def update_card(card_id):
 @require_superadmin_token
 def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
+    empresa_id = card.column.panel.empresa_id if card.column else None
     db.session.delete(card)
     db.session.commit()
+    if empresa_id:
+        publish_event(current_app, empresa_id, {
+            'type': 'card_deleted',
+            'card_id': card_id
+        })
     return "", 204

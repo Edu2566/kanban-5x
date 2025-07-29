@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session
+from flask import Blueprint, render_template, request, redirect, url_for, g, abort, session, current_app, jsonify
 from ..models import db, Column, Card, Panel, Usuario
-from flask import jsonify
 from .auth import login_required, superadmin_required, has_panel_access
+from ..sse import publish_event
+from api.cards import _serialize as serialize_card
+from api.columns import _serialize as serialize_column
+from api.panels import _serialize as serialize_panel
 
 MAX_VALOR_NEGOCIADO = 9_999_999
 
@@ -119,6 +122,10 @@ def add_column():
     column = Column(name=name, panel_id=panel_id)
     db.session.add(column)
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'column_created',
+        'column': serialize_column(column)
+    })
     return redirect(url_for('main.index'))
 
 @main.route('/edit_column/<int:column_id>', methods=['POST'])
@@ -132,6 +139,10 @@ def edit_column(column_id):
         return 'Acesso negado', 403
     column.name = request.form['name']
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'column_updated',
+        'column': serialize_column(column)
+    })
     return redirect(url_for('main.index'))
 
 @main.route('/delete_column/<int:column_id>', methods=['POST'])
@@ -145,6 +156,10 @@ def delete_column(column_id):
         return 'Acesso negado', 403
     db.session.delete(column)
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'column_deleted',
+        'column_id': column_id
+    })
     return '', 204
 
 @main.route('/add_card/<int:column_id>', methods=['POST'])
@@ -181,6 +196,10 @@ def add_card(column_id):
     )
     db.session.add(card)
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'card_created',
+        'card': serialize_card(card)
+    })
     return redirect(url_for('main.index'))
 
 @main.route('/edit_card/<int:card_id>', methods=['POST'])
@@ -213,6 +232,10 @@ def edit_card(card_id):
     custom_data = build_custom_data(request.form)
     card.custom_data = custom_data
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'card_updated',
+        'card': serialize_card(card)
+    })
     return redirect(url_for('main.index'))
 
 @main.route('/delete_card/<int:card_id>', methods=['POST'])
@@ -227,6 +250,10 @@ def delete_card(card_id):
         return 'Acesso negado', 403
     db.session.delete(card)
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'card_deleted',
+        'card_id': card_id
+    })
     return '', 204  # Para AJAX deletar sem erro
 
 @main.route('/move_card/<int:card_id>', methods=['POST'])
@@ -252,6 +279,10 @@ def move_card(card_id):
             return 'Vendedor não pertence ao painel', 400
     card.column_id = new_column_id
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'card_moved',
+        'card': serialize_card(card)
+    })
     return redirect(url_for('main.index'))
 
 @main.route('/api/move_card', methods=['POST'])
@@ -278,6 +309,10 @@ def api_move_card():
             return jsonify({'success': False}), 400
     card.column_id = new_column_id
     db.session.commit()
+    publish_event(current_app, g.user.empresa_id, {
+        'type': 'card_moved',
+        'card': serialize_card(card)
+    })
     return jsonify({'success': True})
 
 
