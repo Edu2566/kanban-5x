@@ -5,6 +5,20 @@ body {
 .kanban-board-wrapper {
     overflow-x: auto;
     padding: 1%;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+.kanban-board-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.kanban-top-scroll {
+    overflow-x: auto;
+    height: 12px;
+    margin-bottom: 4px;
+}
+.kanban-top-scroll div {
+    height: 1px;
 }
 
 .kanban-board {

@@ -147,6 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const boardWrapper = document.querySelector('.kanban-board-wrapper');
+    const topScroll = document.getElementById('kanbanTopScroll');
+    if (boardWrapper && topScroll) {
+        const inner = topScroll.firstElementChild;
+        const syncWidth = () => {
+            inner.style.width = boardWrapper.scrollWidth + 'px';
+        };
+        syncWidth();
+        topScroll.addEventListener('scroll', () => {
+            boardWrapper.scrollLeft = topScroll.scrollLeft;
+        });
+        boardWrapper.addEventListener('scroll', () => {
+            topScroll.scrollLeft = boardWrapper.scrollLeft;
+        });
+        new ResizeObserver(syncWidth).observe(boardWrapper);
+    }
+
     const columns = document.querySelectorAll('.kanban-cards');
     columns.forEach(column => {
         new Sortable(column, {
