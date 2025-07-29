@@ -64,3 +64,11 @@ upgrade command again:
 rm -f instance/kanban.db
 flask --app run.py db upgrade
 ```
+
+## Manual real-time update test
+
+1. Start the development server with `flask --app run.py run` and open the
+   board in two browser windows.
+2. In one window create, edit or move a card. The other window should update
+   immediately without a page reload.
+3. Add or remove columns in one window and verify the second window refreshes.
