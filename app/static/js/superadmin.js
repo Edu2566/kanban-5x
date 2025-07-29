@@ -101,4 +101,25 @@ document.addEventListener('DOMContentLoaded', () => {
             select.addEventListener('change', updateCreateColumnAction);
         }
     }
+
+    // Convert long lists into horizontal scroll areas
+    document.querySelectorAll('.scroll-area ul').forEach(ul => {
+        if (ul.children.length > 5) {
+            const wrapper = ul.parentElement;
+            const prev = document.createElement('button');
+            prev.className = 'scroll-arrow prev btn btn-light';
+            prev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+            const next = document.createElement('button');
+            next.className = 'scroll-arrow next btn btn-light';
+            next.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            wrapper.appendChild(prev);
+            wrapper.appendChild(next);
+            prev.addEventListener('click', () => {
+                ul.scrollBy({left: -200, behavior: 'smooth'});
+            });
+            next.addEventListener('click', () => {
+                ul.scrollBy({left: 200, behavior: 'smooth'});
+            });
+        }
+    });
 });
