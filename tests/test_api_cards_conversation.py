@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app, db
-from app.models import Empresa, Usuario, Column, Card
+from app.models import Empresa, Usuario, Column, Card, Panel
 
 
 def setup_app():
@@ -16,9 +16,10 @@ def setup_basic():
     empresa = Empresa(nome='ACME', account_id='1')
     db.session.add(empresa)
     db.session.commit()
-    column = Column(name='Todo', empresa_id=empresa.id)
+    panel = Panel(name='Main', empresa_id=empresa.id)
+    column = Column(name='Todo', panel_id=panel.id)
     usuario = Usuario(user_id='1', user_email='u@example.com', user_name='U', role='gestor', empresa_id=empresa.id)
-    db.session.add_all([column, usuario])
+    db.session.add_all([panel, column, usuario])
     db.session.commit()
     return empresa, column, usuario
 

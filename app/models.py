@@ -15,7 +15,7 @@ class Empresa(db.Model):
     nome = db.Column(db.String(120), nullable=False)
     account_id = db.Column(db.String(120), unique=True, nullable=False)
 
-    columns = db.relationship('Column', backref='empresa', cascade='all, delete', lazy=True)
+    # relationship to columns handled via panels; removed direct FK
     usuarios = db.relationship('Usuario', backref='empresa', cascade='all, delete', lazy=True)
     # campos customizáveis para cards: lista de definições
     # {"name", "type", "options?"} (até 8 itens)
@@ -64,12 +64,15 @@ class Column(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresas.id'), nullable=False)
     panel_id = db.Column(db.Integer, db.ForeignKey('panels.id'))
     color = db.Column(db.String(7))
 
     panel = db.relationship('Panel', back_populates='columns')
     cards = db.relationship('Card', backref='column', cascade='all, delete', lazy=True)
+
+    @property
+    def empresa(self):
+        return self.panel.empresa if self.panel else None
 
 
 class Card(db.Model):

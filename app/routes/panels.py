@@ -76,7 +76,6 @@ def create_column(panel_id):
             name=name,
             color=color,
             panel_id=panel.id,
-            empresa_id=panel.empresa_id,
         )
         db.session.add(column)
         db.session.commit()
@@ -103,7 +102,6 @@ def edit_column(column_id):
         panel_id = int(request.form['panel_id'])
         panel = Panel.query.get_or_404(panel_id)
         column.panel_id = panel_id
-        column.empresa_id = panel.empresa_id
         db.session.commit()
         next_url = request.form.get('next') or request.args.get('next')
         if next_url:

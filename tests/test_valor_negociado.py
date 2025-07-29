@@ -7,7 +7,7 @@ import pytest
 from flask import g
 
 from app import create_app, db
-from app.models import Empresa, Usuario, Column
+from app.models import Empresa, Usuario, Column, Panel
 from app.routes.main import MAX_VALOR_NEGOCIADO
 
 
@@ -23,8 +23,9 @@ def setup_basic_data():
         role="gestor",
         empresa_id=empresa.id,
     )
-    column = Column(name="Todo", empresa_id=empresa.id)
-    db.session.add_all([usuario, column])
+    panel = Panel(name="Main", empresa_id=empresa.id)
+    column = Column(name="Todo", panel_id=panel.id)
+    db.session.add_all([usuario, panel, column])
     db.session.commit()
     return usuario, column
 
