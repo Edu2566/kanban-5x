@@ -5,8 +5,7 @@ from ..sse import publish_event
 from api.cards import _serialize as serialize_card
 from api.columns import _serialize as serialize_column
 from api.panels import _serialize as serialize_panel
-
-MAX_VALOR_NEGOCIADO = 9_999_999
+from ..constants import MAX_VALOR_NEGOCIADO
 
 main = Blueprint('main', __name__)
 

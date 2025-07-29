@@ -1,7 +1,7 @@
 from flask import request, jsonify, abort, current_app
 
 from app.models import db, Card, Column, Panel, Usuario
-from app.routes.main import MAX_VALOR_NEGOCIADO
+from app.constants import MAX_VALOR_NEGOCIADO
 
 from . import api_bp, require_superadmin_token
 from app.sse import publish_event

@@ -8,7 +8,7 @@ from flask import g
 
 from app import create_app, db
 from app.models import Empresa, Usuario, Column, Panel
-from app.routes.main import MAX_VALOR_NEGOCIADO
+from app.constants import MAX_VALOR_NEGOCIADO
 
 
 def setup_basic_data():
