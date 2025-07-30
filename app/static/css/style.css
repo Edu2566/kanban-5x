@@ -73,19 +73,33 @@ header {
 
 .filter-toggle-btn {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    transform: translateY(50%);
+    bottom: -1.5rem;
+    right: 0;
     z-index: 10;
 }
 
+.filter-toggle-btn i {
+    color: #0747A6;
+}
+
 #filterForm {
+    position: absolute;
+    bottom: -1.5rem;
+    right: 3rem;
     transition: transform 0.3s ease, opacity 0.3s ease;
-    transform-origin: left;
+    transform-origin: right;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
 }
 
 #filterForm.filters-hidden {
-    transform: translateX(-100%);
+    transform: translateX(100%);
     opacity: 0;
     pointer-events: none;
+}
+
+#filterForm .form-control,
+#filterForm .form-select {
+    width: 8rem;
 }
