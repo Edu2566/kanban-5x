@@ -72,6 +72,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="post" action="{{ url_for('superadmin.create_vendedor', token=session['superadmin_token'], next=url_for('superadmin.empresa_detail', empresa_id=empresa.id, token=session['superadmin_token'])) }}" id="createVendedorForm">
+        <input type="hidden" name="empresa_id" value="{{ empresa.id }}">
         <div class="modal-header">
           <h5 class="modal-title" id="createVendedorModalLabel">Criar Vendedor/Gestor</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
