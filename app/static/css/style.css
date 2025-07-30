@@ -73,7 +73,7 @@ header {
 
 .filter-toggle-btn {
     position: absolute;
-    bottom: 0;
+    bottom: -1.5rem;
     right: 0;
     transform: translateY(50%);
     z-index: 10;
@@ -85,7 +85,7 @@ header {
 
 #filterForm {
     position: absolute;
-    bottom: 0;
+    bottom: -1.5rem;
     right: 3rem;
     transform: translateY(50%);
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -96,12 +96,12 @@ header {
 }
 
 #filterForm.filters-hidden {
-    transform: translate(100%, 50%);
+    transform: translateX(100%);
     opacity: 0;
     pointer-events: none;
 }
 
 #filterForm .form-control,
 #filterForm .form-select {
-    width: 10rem;
+    width: 8rem;
 }
