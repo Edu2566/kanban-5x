@@ -147,7 +147,3 @@ pytest
 - Arquivos JavaScript localizados em `app/static/js` são incluídos nos templates via `url_for('static', filename='js/kanban.js')`.
 - Para efetuar migrações de banco de dados, siga as instruções da seção **Database migrations** do README original.
 - O valor máximo permitido para “Valor negociado” em um cartão é definido por `MAX_VALOR_NEGOCIADO` (9.999.999).
-
----
-
-Este guia apresenta o funcionamento geral do sistema Kanban 5x e os passos necessários para instalação e uso das principais funções. Para personalizações adicionais, consulte o código-fonte e os testes incluídos no projeto.
