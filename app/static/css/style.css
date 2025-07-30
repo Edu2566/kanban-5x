@@ -67,8 +67,12 @@ body.dark-mode {
     font-size: 0.8rem;
 }
 
-header {
+#kanbanHeader {
     position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
 }
 
 .filter-toggle-btn {
@@ -88,6 +92,7 @@ header {
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-top: 0.5rem;
+    grid-column: 1 / -1;
 }
 
 #filterForm.filters-hidden {

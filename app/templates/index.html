@@ -12,7 +12,7 @@
 {% set dark = g.user.empresa.dark_mode %}
 <body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
 <div class="container py-4">
-    <header class="d-flex justify-content-between align-items-center mb-4 position-relative">
+    <header id="kanbanHeader" class="mb-4 position-relative">
         <div class="d-flex align-items-center gap-3">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo">
             {% if panels %}
