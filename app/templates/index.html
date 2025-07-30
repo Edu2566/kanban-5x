@@ -47,17 +47,17 @@
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
         {% endif %}
         </div>
-        <form id="filterForm" class="row g-2 align-items-end mb-3 filters-hidden">
-            <div class="col-sm-3">
+        <form id="filterForm" class="mb-3 filters-hidden">
+            <div>
                 <input type="text" id="filterTitle" class="form-control" placeholder="Título">
             </div>
-            <div class="col-sm-2">
+            <div>
                 <input type="number" step="0.01" id="filterValorMin" class="form-control" placeholder="Valor mín.">
             </div>
-            <div class="col-sm-2">
+            <div>
                 <input type="number" step="0.01" id="filterValorMax" class="form-control" placeholder="Valor máx.">
             </div>
-            <div class="col-sm-2">
+            <div>
                 <select id="filterVendedor" class="form-select">
                     <option value="">Todos</option>
                     {% for vendedor in vendedores %}
@@ -65,11 +65,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-3">
-                <div class="d-flex gap-2">
-                    <input type="date" id="filterDateFrom" class="form-control" placeholder="Início">
-                    <input type="date" id="filterDateTo" class="form-control" placeholder="Fim">
-                </div>
+            <div class="date-range">
+                <input type="date" id="filterDateFrom" class="form-control" placeholder="Início">
+                <input type="date" id="filterDateTo" class="form-control" placeholder="Fim">
             </div>
         </form>
     </header>

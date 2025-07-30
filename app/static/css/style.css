@@ -88,9 +88,9 @@ body.dark-mode {
 }
 
 #filterForm {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
-    flex-wrap: wrap;
     margin-top: 0.5rem;
     grid-column: 1 / -1;
 }
@@ -102,4 +102,10 @@ body.dark-mode {
 #filterForm .form-control,
 #filterForm .form-select {
     width: 100%;
+}
+
+#filterForm .date-range {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
 }
