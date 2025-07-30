@@ -87,6 +87,18 @@ body.dark-mode {
     color: #0747A6;
 }
 
+/* Dark mode button styles */
+.dark-mode #toggleThemeForm button,
+.dark-mode .filter-toggle-btn {
+    color: #fff;
+    border-color: #fff;
+}
+
+.dark-mode #toggleThemeForm i,
+.dark-mode .filter-toggle-btn i {
+    color: #fff;
+}
+
 #filterForm {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
