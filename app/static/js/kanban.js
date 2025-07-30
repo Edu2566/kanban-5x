@@ -366,10 +366,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const filterToggleBtn = document.getElementById('filterToggleBtn');
-    const filterForm = document.getElementById('filterForm');
-    if (filterToggleBtn && filterForm) {
+    const filterContainer = document.getElementById('filterContainer');
+    if (filterToggleBtn && filterContainer) {
         filterToggleBtn.addEventListener('click', () => {
-            filterForm.classList.toggle('filters-hidden');
+            filterContainer.classList.toggle('expanded');
         });
     }
 

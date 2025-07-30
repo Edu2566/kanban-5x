@@ -44,10 +44,11 @@
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
         {% endif %}
         </div>
-        <button id="filterToggleBtn" type="button" class="btn btn-outline-secondary filter-toggle-btn">
-            <i class="fa-solid fa-filter"></i>
-        </button>
-        <form id="filterForm" class="row g-2 align-items-end mb-3 filters-hidden">
+        <div id="filterContainer" class="filter-container">
+            <button id="filterToggleBtn" type="button" class="btn btn-outline-secondary filter-toggle-btn">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+            <form id="filterForm" class="row g-2 align-items-end">
             <div class="col-sm-3">
                 <label class="form-label" for="filterTitle">Título</label>
                 <input type="text" id="filterTitle" class="form-control" placeholder="Buscar título">
@@ -76,7 +77,8 @@
                     <input type="date" id="filterDateTo" class="form-control">
                 </div>
             </div>
-        </form>
+            </form>
+        </div>
     </header>
     <div id="kanbanTopScroll" class="kanban-top-scroll"><div></div></div>
     <div class="kanban-board-wrapper">

@@ -71,12 +71,20 @@ header {
     position: relative;
 }
 
+.filter-container {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    width: 2.5rem;
+    transition: width 0.3s ease;
+}
+
+.filter-container.expanded {
+    width: 100%;
+}
+
 .filter-toggle-btn {
-    position: absolute;
-    bottom: -1.5rem;
-    right: 0;
-    transform: translateY(50%);
-    z-index: 10;
+    flex-shrink: 0;
 }
 
 .filter-toggle-btn i {
@@ -84,21 +92,19 @@ header {
 }
 
 #filterForm {
-    position: absolute;
-    bottom: -1.5rem;
-    right: 3rem;
-    transform: translateY(50%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform-origin: right;
     display: flex;
     gap: 0.5rem;
     flex-wrap: nowrap;
+    margin-left: 0.5rem;
+    opacity: 0;
+    flex-grow: 1;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
-#filterForm.filters-hidden {
-    transform: scaleX(0);
-    opacity: 0;
-    pointer-events: none;
+.filter-container.expanded #filterForm {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 #filterForm .form-control,
