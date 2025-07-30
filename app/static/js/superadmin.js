@@ -101,4 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
             select.addEventListener('change', updateCreateColumnAction);
         }
     }
+
+    const createColumnBtn = document.getElementById('createColumnBtn');
+    if (createColumnBtn) {
+        createColumnBtn.addEventListener('click', function(event) {
+            if (this.dataset.hasPanels === '0') {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const modalEl = document.getElementById('noPanelModal');
+                if (modalEl) {
+                    const m = new bootstrap.Modal(modalEl);
+                    m.show();
+                }
+            }
+        });
+    }
 });
