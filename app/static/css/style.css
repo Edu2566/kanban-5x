@@ -84,22 +84,14 @@ header {
 }
 
 #filterForm {
-    position: absolute;
-    bottom: -1.5rem;
-    left: 0;
-    right: 0;
-    transform: translateY(50%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform-origin: right;
     display: flex;
     gap: 0.5rem;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
 }
 
 #filterForm.filters-hidden {
-    transform: scaleX(0);
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 #filterForm .form-control,
