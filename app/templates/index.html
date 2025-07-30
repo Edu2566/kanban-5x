@@ -31,6 +31,9 @@
                 <i class="fa-regular {{ 'fa-sun' if dark else 'fa-moon' }}"></i>
             </button>
         </form>
+        <button id="filterToggleBtn" type="button" class="btn btn-outline-secondary filter-toggle-btn">
+            <i class="fa-solid fa-filter"></i>
+        </button>
         {% if columns %}
         <button type="button" class="btn btn-success py-2 px-3" onclick="openAddCardModal({{ columns[0].id }}); return false;">
             <i class="fa-solid fa-plus me-1"></i>Adicionar Card
@@ -44,9 +47,6 @@
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
         {% endif %}
         </div>
-        <button id="filterToggleBtn" type="button" class="btn btn-outline-secondary filter-toggle-btn">
-            <i class="fa-solid fa-filter"></i>
-        </button>
         <form id="filterForm" class="row g-2 align-items-end mb-3 filters-hidden">
             <div class="col-sm-3">
                 <label class="form-label" for="filterTitle">Título</label>
