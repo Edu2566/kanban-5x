@@ -12,7 +12,7 @@
 {% set dark = g.user.empresa.dark_mode %}
 <body class="{{ 'dark-mode' if dark else '' }}" data-user-id="{{ g.user.id }}">
 <div class="container py-4">
-    <header class="d-flex justify-content-between align-items-center mb-4 position-relative">
+    <header id="kanbanHeader" class="mb-4 position-relative">
         <div class="d-flex align-items-center gap-3">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="header-logo">
             {% if panels %}
@@ -47,21 +47,17 @@
         <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary py-2 px-3">Painel Super-Admin</a>
         {% endif %}
         </div>
-        <form id="filterForm" class="row g-2 align-items-end mb-3 filters-hidden">
-            <div class="col-sm-3">
-                <label class="form-label" for="filterTitle">Título</label>
-                <input type="text" id="filterTitle" class="form-control" placeholder="Buscar título">
+        <form id="filterForm" class="mb-3 filters-hidden">
+            <div>
+                <input type="text" id="filterTitle" class="form-control" placeholder="Título">
             </div>
-            <div class="col-sm-2">
-                <label class="form-label" for="filterValorMin">Valor mín.</label>
-                <input type="number" step="0.01" id="filterValorMin" class="form-control">
+            <div>
+                <input type="number" step="0.01" id="filterValorMin" class="form-control" placeholder="Valor mín.">
             </div>
-            <div class="col-sm-2">
-                <label class="form-label" for="filterValorMax">Valor máx.</label>
-                <input type="number" step="0.01" id="filterValorMax" class="form-control">
+            <div>
+                <input type="number" step="0.01" id="filterValorMax" class="form-control" placeholder="Valor máx.">
             </div>
-            <div class="col-sm-2">
-                <label class="form-label" for="filterVendedor">Vendedor</label>
+            <div>
                 <select id="filterVendedor" class="form-select">
                     <option value="">Todos</option>
                     {% for vendedor in vendedores %}
@@ -69,12 +65,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-3">
-                <label class="form-label" for="filterDateFrom">Data Oportunidade</label>
-                <div class="d-flex gap-2">
-                    <input type="date" id="filterDateFrom" class="form-control">
-                    <input type="date" id="filterDateTo" class="form-control">
-                </div>
+            <div class="date-range">
+                <input type="date" id="filterDateFrom" class="form-control" placeholder="Início">
+                <input type="date" id="filterDateTo" class="form-control" placeholder="Fim">
             </div>
         </form>
     </header>
