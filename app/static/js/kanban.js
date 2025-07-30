@@ -365,6 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (_) {}
     };
 
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    const filterForm = document.getElementById('filterForm');
+    if (filterToggleBtn && filterForm) {
+        filterToggleBtn.addEventListener('click', () => {
+            filterForm.classList.toggle('filters-hidden');
+        });
+    }
+
     ['filterTitle','filterValorMin','filterValorMax','filterVendedor','filterDateFrom','filterDateTo'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', filterCards);

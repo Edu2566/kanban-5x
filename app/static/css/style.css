@@ -66,3 +66,26 @@ body.dark-mode {
 .card-date {
     font-size: 0.8rem;
 }
+
+header {
+    position: relative;
+}
+
+.filter-toggle-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(50%);
+    z-index: 10;
+}
+
+#filterForm {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: left;
+}
+
+#filterForm.filters-hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
