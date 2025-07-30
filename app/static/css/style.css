@@ -96,7 +96,7 @@ header {
 }
 
 #filterForm.filters-hidden {
-    transform: translateX(100%);
+    transform: scaleX(0);
     opacity: 0;
     pointer-events: none;
 }
