@@ -67,8 +67,12 @@ body.dark-mode {
     font-size: 0.8rem;
 }
 
-header {
+#kanbanHeader {
     position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
 }
 
 .filter-toggle-btn {
@@ -84,25 +88,24 @@ header {
 }
 
 #filterForm {
-    position: absolute;
-    bottom: -1.5rem;
-    left: 0;
-    right: 0;
-    transform: translateY(50%);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform-origin: right;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
-    flex-wrap: nowrap;
+    margin-top: 0.5rem;
+    grid-column: 1 / -1;
 }
 
 #filterForm.filters-hidden {
-    transform: scaleX(0);
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 #filterForm .form-control,
 #filterForm .form-select {
     width: 100%;
+}
+
+#filterForm .date-range {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
 }
