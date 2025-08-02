@@ -3,6 +3,9 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def format_brl(value):
@@ -22,8 +25,9 @@ def create_app():
     app.config["SESSION_COOKIE_SECURE"] = True
     app.template_filter('brl')(format_brl)
     os.makedirs(app.instance_path, exist_ok=True)
-    db_path = os.path.join(app.instance_path, "kanban.db")
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+        "DATABASE_URL", "postgresql://user:password@host:5432/kanban"
+    )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
