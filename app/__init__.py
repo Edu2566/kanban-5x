@@ -33,12 +33,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Import models so that create_all can see them
+    # Import models so that migrations can detect them
     from .models import Empresa, Usuario, Column, Card, Panel  # noqa: F401
-
-    # Create database tables if they don't exist yet
-    with app.app_context():
-        db.create_all()
 
     from .routes.main import main
     from .routes.webhook import webhook_bp
